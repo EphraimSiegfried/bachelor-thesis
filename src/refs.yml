@@ -1,0 +1,10 @@
+nixos-how-nix-works:
+  type: Web
+  title: How Nix Works
+  author: The NixOs Foundation
+  url: {value: 'https://nixos.org/guides/how-nix-works', date: 2025-9-19}
+dolstra-phd:
+  type: thesis
+  author: Eelco Dolstra
+  year: 2006
+  title: The Purely Functional Software Deployment Model
