@@ -1,3 +1,5 @@
+# Bibliography Management with Hayagriva
+# Docs: https://github.com/typst/hayagriva/blob/main/docs/file-format.md
 nixos-how-nix-works:
   type: Web
   title: How Nix Works
@@ -5,6 +7,23 @@ nixos-how-nix-works:
   url: {value: 'https://nixos.org/guides/how-nix-works', date: 2025-9-19}
 dolstra-phd:
   type: thesis
-  author: Eelco Dolstra
-  year: 2006
+  author: Dolstra, Eelco
+  date: 2006-2
   title: The Purely Functional Software Deployment Model
+nixdev-derivation:
+  type: Web
+  title: Nix Derivations
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.31/store/derivation/index.html', date: 2025-9-22}
+nixdev-derivation-outputs:
+  type: Web
+  title: Derivation Outputs and Types of Derivations
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.31/store/derivation/outputs/index.html', date: 2025-9-22}
+nixos-ca-derivations:
+  type: Web
+  title: Ca-derivations
+  author: NixOS Wiki
+  url: {value: 'https://nixos.wiki/wiki/Ca-derivations', date: 2025-9-22}
