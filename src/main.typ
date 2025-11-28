@@ -24,7 +24,8 @@
 
   chapters: (
     include "content/introduction.typ",
-    include "content/background.typ"
+    include "content/background.typ",
+    include "content/design.typ"
   ),
 
   bibliography-content: bibliography("refs.yml", style: "ieee", title: none)
