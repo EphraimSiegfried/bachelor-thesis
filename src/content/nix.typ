@@ -41,3 +41,5 @@ Furthermore, input-addressing derivations must be pure. To illustrate, consider 
 The disadvantage of input-addressing derivations is that changes in the inputs that don't alter the resulting Nix object (e.g. a comment in the source code) will also alter the hash and force a rebuild of the derivation. This is prevented in content-addressing derivations which only hash the content of the resulting Nix object. It enables early cutoff, i.e. stopping a rebuild if it can be proven that the end result will be the same as a known object in the Nix store. @nixos-ca-derivations In content-addressing derivations the purity condition is lifted.  #todo[Explain why]
 
 === The Deployment Pipeline
+
+== Binary Cache Interface <binary-cache-interface>

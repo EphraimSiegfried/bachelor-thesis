@@ -31,7 +31,13 @@ Although this is not used in Gachix, an equivalent of Nix profiles and user envi
 
 == Cache Interface
 
-To integrate Gachix into the existing Nix ecosystem as a binary cache, it is easiest to implement the same interface endpoints that the existing binary caches use.
+To integrate Gachix into the existing Nix ecosystem as a binary cache, it is easiest to implement the same API that the existing binary caches provide (see @binary-cache-interface). With this interface, a Nix user can add the URL of the Gachix service to the set of _substitutors_. Everytime the user adds a package, Nix will ask Gachix for package availability and fetch it if it is available.
+
+The binary cache needs to serve metadata about the packages which is called Narinfo in Nix. Usually in other cache implementations the narinfo is computed on demand. In Gachix everytime a package is added to Gachix, the Narinfo is computed once and it is stored as a blob. Additionally, to associate this blob with a package, a reference is added under _refs/\<package-nix-hash\>/narinfo_ which points to this blob directly. Everytime a Narinfo is requested (with `GET /<package-nix-hash>.narinfo`) for a given Nix hash, Gachix serves the contents of this blob which it gets through this reference.
+
+The Narinfo contains an URL, under which the nar of a package can be downloaded. This link usually contains the hash of the Nar of the package. But because this endpoint can be chosen arbitrarily, I decided to put the hash of the package tree instead. It would also be possible to put the hash of the package commit, which would enable sending the whole package closure to the client. But since Nix only expects the contents of the requested package and not its dependencies, it is enough and faster to include the tree hash in the URL. The Nix user can then request a package with ` GET refs/nar/\<tree-hash\>.nar`. Gachix then directly accesses the tree, converts it to a nar and sends the archive to the client. The user can verify whether the hash corresponds to the package by unpacking the received nar, converting it to a Git tree and comparing the tree hash with the hash in the URL.
+
+With the request `HEAD /<package-nix-hash>.nar` a client can ask the cache if it has the corresponding package. This request is handled by checking whether a reference exists containing the requested hash.
 
 
 == Replication Protocol <replication-protocol>
