@@ -2,7 +2,7 @@
 
 #show: thesis.with(
   draft: true,
-  title: "Gachix: A content-addressable binary cache for Nix over Git",
+  title: "Gachix:\n A binary cache for Nix over Git",
   author: "Ephraim Siegfried",
   email: "e.siegfried@unibas.ch",
   supervisor: "Dr. Erick Lavoie",
