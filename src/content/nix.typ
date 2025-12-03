@@ -3,13 +3,13 @@
 
 Nix is a declarative and purely functional package manager. The main purpose of Nix is to solve reproducibility shortcomings of other package managers. When packaging an application with RPM for example, the developer is supposed to declare all the dependencies, but there is no guarantee that the declaration is complete. There might be a shared library provided by the local environment which is a dependency the developer does not know of. The issue is that the app will build and work correctly on the machine of the developer but might fail on the end user's machine. Nix provides a functional language with which the developer can declaratively define all software components a package needs. Nix ensures that these dependency specifications are complete and that Nix expressions are deterministic, i.e. building a Nix expressions twice yields the same result. @nixos-how-nix-works
 
-=== The Nix Store <nix-store>
+=== Nix Store <nix-store>
 The Nix store is a read-only directory (usually located at `/nix/store`) where Nix store objects are stored. Store objects are source files, build artifacts (e.g. binaries) and derivations among other things. These objects can refer to other store objects in the Nix store (e.g. dependencies in binaries). To prevent ambiguity, every object has a unique identifier, which is a hash. This hash is reflected in the path of the object, which is constructed as `/nix/store/<nix-hash>-<object-name>-<object-version>`.
 
 There are two major ways of computing the hash. The prevalent way is to hash the package build dependency graph. There is also an experimental feature where it is computed by hashing the store object contents. In the first case the addressing scheme is called input-addressing and in the latter content-addressing.
 
 
-=== The Deployment Pipeline
+=== Deployment Pipeline
 
 To produce a package in Nix, a derivation has to be produced. A derivation is a build plan that specifies how to create one or more output objects in the Nix store (it has the .drv extension). It also pins down the run and build time dependencies and specifies what the path of the output will be. It is an intermediate artifact generated when a Nix package expression is evaluated, analogous to an object file (`*.o`) in a C compilation process.
 
