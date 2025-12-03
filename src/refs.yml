@@ -28,7 +28,7 @@ nixos-ca-derivations:
   author: NixOS Wiki
   url: {value: 'https://nixos.wiki/wiki/Ca-derivations', date: 2025-9-22}
 gitlab-issue-175:
-  type: web
+  type: Web
   title: "'git remote -t' should list tags for specific remotes"
   author:
     - name: "GitLab"
@@ -36,3 +36,13 @@ gitlab-issue-175:
   date: 2013-05-18
   url: {value: 'https://gitlab.com/gitlab-org/git/-/issues/175', date: 2025-12-02}
   accessed: 2025-12-02
+git-internals-objects:
+  type: Book
+  title: Pro Git
+  author:
+    - Chacon, Scott
+    - Straub Ben
+  date: 2025-07-25
+  publisher: Apress
+  location: Berkeley, CA
+  url: https://git-scm.com/book/en/v2
