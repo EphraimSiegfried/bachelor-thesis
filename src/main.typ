@@ -25,7 +25,11 @@
   chapters: (
     include "content/introduction.typ",
     include "content/background.typ",
-    include "content/design.typ"
+    include "content/design.typ",
+    include "content/implementation.typ",
+    include "content/evaluation.typ",
+    include "content/related_work.typ",
+    include "content/conclusion.typ",
   ),
 
   bibliography-content: bibliography("refs.yml", style: "ieee", title: none)
