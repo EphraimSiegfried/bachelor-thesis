@@ -4,6 +4,7 @@
     enable = true;
     fontPaths = [
       "${pkgs.cascadia-code}"
+      "${pkgs.corefonts}"
     ];
   };
 
@@ -12,5 +13,6 @@
 
   packages = with pkgs; [
     cascadia-code
+    corefonts
   ];
 }
