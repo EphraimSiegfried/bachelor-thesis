@@ -22,6 +22,12 @@ nixdev-derivation-outputs:
   author: Nix Dev
   year: 2025
   url: {value: 'https://nix.dev/manual/nix/2.31/store/derivation/outputs/index.html', date: 2025-9-22}
+nixdev-nar:
+  type: Web
+  title: Nix Archive (NAR) format
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.22/protocols/nix-archive', date: 2025-12-04}
 nixos-ca-derivations:
   type: Web
   title: Ca-derivations
@@ -35,7 +41,6 @@ gitlab-issue-175:
     - name: "GitLab Organization"
   date: 2013-05-18
   url: {value: 'https://gitlab.com/gitlab-org/git/-/issues/175', date: 2025-12-02}
-  accessed: 2025-12-02
 git-internals-objects:
   type: Book
   title: Pro Git
@@ -46,3 +51,8 @@ git-internals-objects:
   publisher: Apress
   location: Berkeley, CA
   url: https://git-scm.com/book/en/v2
+binary-cache-spec:
+  type: Web
+  title: Nix Binary Cache
+  author: Zakaria, Farid
+  url: {value: 'https://fzakaria.github.io/nix-http-binary-cache-api-spec/#/', date: 2025-12-04}
