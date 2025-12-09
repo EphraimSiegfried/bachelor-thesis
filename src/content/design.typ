@@ -2,9 +2,9 @@
 #import "@preview/algorithmic:1.0.7"
 #import algorithmic: style-algorithm, algorithm-figure
 
-= Design
+= Design <design>
 
-== Mapping Nix to Git
+== Mapping Nix to Git <nix-to-git>
 
 This chapter introduces how Nix concepts are mapped to the Git object model. @nix-filesystem displays a simple Nix store with a package called _foo_ which depends on packages _libfoo_ and _bar_. This section shows which transformations are taken to have an equivalent model in Git which is represented in @gachix-git-model.
 
@@ -50,7 +50,7 @@ This section explains how packages are added to the cache and replicated across 
 
 There is no policy yet on when Gachix adds packages to its repository. In the current version, it has to be manually run in the command line. A possible policy would be to always try to add a package when a Nix user requests one via the HTTP interface and it does not exist on the local repository. Gachix should then fetch the package from trusted replicas or may build it using the daemon protocol.
 
-=== Constructing Package Closures
+=== Constructing Package Closures <constructing-package-closures>
 
 The current algorithm of adding a package closure is displayed in @add-closure-algo. The algorithm receives the Nix store hash as an argument and returns the commmit id associated with that package. It tries to recursively add package contents to the Git repository. At it's core, it is similar to a depth first search algorihm (See lines 19-28 in @add-closure-algo). The algorithm iterates through a package's direct dependencies (line 21). For  each dependency $d$, it makes a recursive call to _add_closure(d)_ (line 23). This means it fully processes one dependency, including all its dependencies, before moving to the next direct dependency in the list. Once it has collected all commit hashes of the dependencies, it constructs a commit using the hash collection as parent commits (line 26). 
 

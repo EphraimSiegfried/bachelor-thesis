@@ -1,0 +1,82 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.1 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="hbRnPJAI-GEOj0ynlv_k">
+    <mxGraphModel dx="1425" dy="877" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-14" value="Command Line Interface" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="510" width="190" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-15" value="Start&lt;div&gt;Webserver&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-14">
+          <mxGeometry x="10" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-16" value="Add&amp;nbsp;&lt;div&gt;Package&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-14">
+          <mxGeometry x="100" y="80" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-17" target="SGWpm2xPCDY7yYPP8qBC-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-17" value="Web Server" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry y="680" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-18" value="Retrieve&lt;div&gt;Package Nar&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-17">
+          <mxGeometry x="10" y="110" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-19" value="Retrieve&lt;div&gt;Narinfo&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-17">
+          <mxGeometry x="110" y="110" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-20" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-15" target="SGWpm2xPCDY7yYPP8qBC-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-21" value="Package Manager" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="680" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-22" value="Add dependency closure" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-21">
+          <mxGeometry x="10" y="110" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-23" value="Retrieve Package Nar" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-21">
+          <mxGeometry x="110" y="110" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-24" value="Git R&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;epository&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="920" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-25" value="Nar to Tree/&lt;div&gt;Tree to Nar&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry x="20" y="120" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-26" value="Add/Get reference" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry x="110" y="120" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-27" value="Commit" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry x="20" y="30" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-28" value="Fetch&lt;br&gt;Refspec" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry x="110" y="30" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-30" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-22" target="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-31" value="Nix Daemon" style="swimlane;whiteSpace=wrap;html=1;startSize=20;" vertex="1" parent="1">
+          <mxGeometry x="720" y="920" width="200" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-32" value="Get&lt;div&gt;PathInfo&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-31">
+          <mxGeometry x="20" y="120" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-33" value="Fetch&lt;div&gt;Package&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-31">
+          <mxGeometry x="110" y="120" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-36" value="Path Exists" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-31">
+          <mxGeometry x="20" y="40" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-37" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-16" target="SGWpm2xPCDY7yYPP8qBC-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-39" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-23" target="SGWpm2xPCDY7yYPP8qBC-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="SGWpm2xPCDY7yYPP8qBC-40" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-22" target="SGWpm2xPCDY7yYPP8qBC-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
