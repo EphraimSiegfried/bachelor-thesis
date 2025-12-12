@@ -21,5 +21,11 @@ The Repository module is mainly a wrapper of the Rust library Git2 #footnote[htt
 
 The Nix Daemon module is responsible for communicating to either the local Nix daemon (i.e. the daemon which runs on the same machine as Gachix) or to remote Nix Daemons via the SSH protocol. It contains code for setting up SSH connections, retrieving metadata about store paths and retrieving store objects in the Nar archive format. It depends on a custom fork of a library which implements the Nix daemon protocol.#footnote[https://codeberg.org/siegii/gorgon/src/branch/main/nix-daemon]  The fork includes low-level code for retrieving the Nar which did not exist in the original library.
 
+The Narinfo module constructs a Narinfo data structure from the Nix object metadata retrieved from the Nix daemon. It also is able to encode this metadata as a string, which is then stored as a blob in the Git database. Additionally, it signs the signature of the Narinfo and appends it to the narinfo (See @binary-cache-interface).
+
+The Nar module transforms trees to nars and vice versa. It is used to transform nars retrieved from Nix daemons to equivalent Git trees. It encodes trees as Nars when Nix cache clients request packages. It does not have to load the whole Git tree onto memory because it is able to stream the nar, i.e. decode the tree in chunks and serve these chunks continously.
+
+
+=== Concurrency
 
 === 
