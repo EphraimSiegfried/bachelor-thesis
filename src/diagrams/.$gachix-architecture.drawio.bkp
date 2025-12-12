@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.1 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="hbRnPJAI-GEOj0ynlv_k">
-    <mxGraphModel dx="1181" dy="727" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1722" dy="1060" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -35,9 +35,6 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="SGWpm2xPCDY7yYPP8qBC-45" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-21" target="SGWpm2xPCDY7yYPP8qBC-31">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="SGWpm2xPCDY7yYPP8qBC-54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="SGWpm2xPCDY7yYPP8qBC-21" target="SGWpm2xPCDY7yYPP8qBC-50">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="SGWpm2xPCDY7yYPP8qBC-21" value="Package Manager" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
@@ -87,15 +84,6 @@
         </mxCell>
         <mxCell id="SGWpm2xPCDY7yYPP8qBC-48" value="Tree to Nar" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-46">
           <mxGeometry x="110" y="60" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="SGWpm2xPCDY7yYPP8qBC-50" value="Narinfo" style="swimlane;whiteSpace=wrap;html=1;startSize=20;" vertex="1" parent="1">
-          <mxGeometry x="470" y="920" width="200" height="200" as="geometry" />
-        </mxCell>
-        <mxCell id="SGWpm2xPCDY7yYPP8qBC-51" value="Encode" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-50">
-          <mxGeometry x="20" y="70" width="70" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="SGWpm2xPCDY7yYPP8qBC-55" value="Decode" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="SGWpm2xPCDY7yYPP8qBC-50">
-          <mxGeometry x="110" y="70" width="70" height="70" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
