@@ -28,4 +28,10 @@ The Nar module transforms trees to nars and vice versa. It is used to transform 
 
 === Concurrency
 
-=== 
+=== Nar
+
+=== Nix Daemon Libraries
+
+=== Content and Input Addressing Schemes
+
+=== Limitations
