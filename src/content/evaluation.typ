@@ -65,9 +65,26 @@ From the results we can conclude that _gachix_ is reasonably fast and can compet
 
 == Package Storage
 
+This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches. Given that all services use the Nix store and Gachix uses Git as its primary storage for Nix packages, the comparison is more accurately one between the Nix store and the Git database.
+
 === Methodology
+
+In this experiment, 500 randomly selected packages were added to both the Nix store and Gachix.
+
+To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 500 packages in the Nix store.
+
+Note on Comparison: The sum of the package sizes in the Nix store serves as a lower-bound estimate for the storage required by other cache services. This estimate is conservative because it does not account for potential operational overhead or internal metadata that other caching mechanisms might introduce.
+
+
 === Result
+
+The sum of the package sizes in the Nix store is 3.88 GB. The size of the `.git` repository is 0.68 GB. This is a size reduction of 82.47%.
+
 === Discussion
+
+There are two reasons why we observe this size reduction. Firstly, Gachix compresses its objects using zlib. @git-internals-objects. The Nix store does not contain any compressed packages. 
+
+Secondly, since the Git object database is a Merkle tree and every object is identified by its hash, identical files in the Nix store are only stored once in the Git database. This deduplication of files is also a reason why the size is smaller in Gachix.
 
 == Nix Transparency
 === Methodology
