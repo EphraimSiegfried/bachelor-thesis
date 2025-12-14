@@ -28,6 +28,14 @@ The Nar module transforms trees to nars and vice versa. It is used to transform 
 
 === Concurrency
 
+To increase the performance of the binary cache, it is crucial to handle requests concurrently. Concurrency can lead to inconsistent state or crashes if handled incorrectly. Inconsistent state happens most often when multiple threads modify the same objects. In Gachix this threat is eliminated by ensuring that threads never modify objects.
+
+Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a Nar and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads
+read the same object at the same time.
+
+Adding a package involves contacting other Gachix peers, fetching Git objects from them or fetching Nars and path metadata from Nix daemons. 
+
+
 === Nar
 
 === Nix Daemon Libraries
