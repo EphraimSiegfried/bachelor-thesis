@@ -4,7 +4,7 @@ This section explains how a binary cache was implemented using the ideas present
 
 The project is written in the Rust programming language. This compiled language is ideal for ressource-intensive tasks such as parsing a large number of Nar files. The language is also optimal for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
 
-=== Architecture
+== Architecture
 
 A high-level overview of the implementation can be seen in @gachix-architecture. The top-level boxes represent the most relevant modules in the code base and the nested boxes their most important functions.
 
@@ -26,20 +26,33 @@ The Narinfo module constructs a Narinfo data structure from the Nix object metad
 The Nar module transforms trees to nars and vice versa. It is used to transform nars retrieved from Nix daemons to equivalent Git trees. It encodes trees as Nars when Nix cache clients request packages. It does not have to load the whole Git tree onto memory because it is able to stream the nar, i.e. decode the tree in chunks and serve these chunks continously.
 
 
-=== Concurrency
+== Concurrency
 
 To increase the performance of the binary cache, it is crucial to handle requests concurrently. Concurrency can lead to inconsistent state or crashes if handled incorrectly. Inconsistent state happens most often when multiple threads modify the same objects. In Gachix this threat is eliminated by ensuring that threads never modify objects.
 
-Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a Nar and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads
-read the same object at the same time.
+Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a Nar and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads read the same object at the same time.
 
-Adding a package involves contacting other Gachix peers, fetching Git objects from them or fetching Nars and path metadata from Nix daemons. 
+Adding a package can happen by contacting other Gachix peers and fetching the needed Git objects from them. In this case, only new objects will be added to the Git database. Two threads cannot store two different objects with the same name because trees, blobs and commits are content addressed and references are named after unique Nix hashes. The only scenario that can happen is that two threads try to add the same object but this does not cause a conflict. When fetching Nars from Nix daemons they are transformed to equivalent Git trees. In this process, also only new objects are added.
+
+Since all operations either read or add objects to the database, there is no conflict between multiple threads. Therefore no locking mechanisms have to be used when serving the packages concurrently.
+
+== Nar
 
 
-=== Nar
+== Nix Daemon
 
-=== Nix Daemon Libraries
+In Gachix the Nix daemon protocol is used to interract with the Nix API, i.e. to fetch packages and retrieve metadata information about them.  One benefit of using the Nix daemon rather than utilizing the Nix command line interface is that it allows interracting with the Nix daemon as a non-root user. Another benefit of using it is that it prevents calling system commands such as `nix store dump-path` and `nix path-info`. Spawning a new process for each request to Nix is considerably slower than utilizing inter-process communication to interact with the API through the persistent daemon. Lastly, using the Nix daemon protocol makes it straightforward to interact with remote Nix daemons. Gachix connects to remote nodes via SSH and then calls `nix daemon --stdio`. It then communicates with the remote daemon by piping data through _stdin_ and _stdout_.
 
-=== Content and Input Addressing Schemes
+=== Libraries
 
-=== Limitations
+There are few publicly available libraries that implement the Nix daemon protocol interface, and finding them is difficult. The existing implementations identified are typically found as submodules or components within larger projects, rather than as standalone, dedicated libraries. Consequently, these modules are often highly tailored to the specific requirements of their parent projects, often implementing only a limited subset of the full Nix daemon operations necessary for their particular use case. Libraries that were found are:
+
+- *Snix*: Snix reimplements the Nix package manager (more in @snix). It has a module for interracting with existing Nix protocols. In this module there is a submodule which implements the daemon handshake protocol and a limited set of operations. #footnote[https://git.snix.dev/snix/snix/src/branch/canon/snix/nix-compat/src/nix_daemon]
+- *Harmonia*: Harmonia implements the Nix binary cache interface. It also implements the Nix daemon protocol for the client. #footnote[https://github.com/nix-community/harmonia/tree/main/harmonia-daemon]
+- *Gorgon*: Gorgon is a continous integration framework. It contains a submodule which implements both the client and server daemon protocol. #footnote[https://codeberg.org/gorgon/gorgon/src/branch/main/nix-daemon]
+
+Gachix used the Gorgon module because it is the most generic implementation and it has most operations implemented which are needed in Gachix. It only lacks the operation to fetch Nars from Nix stores. This missing feature was implemented in a custom fork.
+
+== Content and Input Addressing Schemes
+
+== Limitations

@@ -1,6 +1,6 @@
 
 = Related Work
 
-== Snix
+== Snix <snix>
 
 == Laut
