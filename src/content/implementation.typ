@@ -37,7 +37,45 @@ Adding a package can happen by contacting other Gachix peers and fetching the ne
 
 Since all operations either read or add objects to the database, there is no conflict between multiple threads. Therefore no locking mechanisms have to be used when serving the packages concurrently.
 
-== Nar
+== Nix Archive
+
+When serving clients, Gachix encodes packages which are stored as Git trees into Nix Archives (Nars). The specification of the Nix Archive Format is shown in @nar-bnf. @nixdev-nar The _str_ function writes the size of the bytes to be written, the byte sequence specified and a padding of 0s to a multiple of 8 bytes.
+
+
+#figure(
+```
+nar = str("nix-archive-1"), nar-obj;
+
+nar-obj = str("("), nar-obj-inner, str(")");
+
+nar-obj-inner
+  = str("type"), str("regular") regular
+  | str("type"), str("symlink") symlink
+  | str("type"), str("directory") directory
+  ;
+
+regular = [ str("executable"), str("") ], str("contents"), str(contents);
+
+symlink = str("target"), str(target);
+
+(* side condition: directory entries must be ordered by their names *)
+directory = str("type"), str("directory") { directory-entry };
+
+directory-entry = str("entry"), str("("), str("name"), str(name), str("node"), nar-obj, str(")");
+
+```, caption: [Backus Naur Form of the Nix Archive]) <nar-bnf>
+
+=== Simple Encoder
+
+A simple approach to encode a given tree into a Nar is to explore the tree in a depth first search manner, retrieve the metadata about the objects and write this in a byte buffer according to the Nar format. Trees are mapped to directories, blobs to symlinks or regulars depending on their type. This approach is fine for shallow trees but is inefficient and can even lead to errors for large trees. This is because the buffer size can exceed the RAM limit for large packages.
+
+=== Stream Encoder
+
+A more efficient approach is to stream data chunks to the client, allowing the Nar to be constructed incrementally. To enable this, Gachix implements the Stream trait from the futures crate (A Rust interface) for the encoder module. #footnote[https://docs.rs/futures/latest/futures/prelude/trait.Stream.html] Having implemented this trait allows the HTTP server library called Actix Web to asynchronously stream the Nar to the client. #footnote[https://docs.rs/actix-web/latest/actix_web/struct.HttpResponseBuilder.html#method.streaming] Implementing this trait requires implementing the function `poll_next` which returns the next chunk of bytes to be sent. Recursing the Git tree as in the first approach is not possible anymore because control has to be given back to the caller of `poll_next`. 
+
+To address the inability to use standard recursion within the asynchronous `poll_next` method, the implementation replaces the call stack with an explicit state stack (`Vec<TraversalState>`). This transforms the traversal into an iterative state machine. The TraversalState enum captures the specific phase of visiting a node, i.e. whether the encoder is initializing a node (StartNode), iterating through a directory's children (ProcessTreeEntries), or closing a syntactic scope (FinishNode). When the encoder encounters a directory, instead of making a blocking recursive call, it simply pushes the corresponding states onto the stack. This effectively schedules the processing of child nodes and the finalize markers for future execution cycles, allowing the function to yield control back to the async runtime after every chunk.
+
+This architecture decouples the logic of tree traversal from the actual transmission of data. As the state machine advances, it serializes specific components of the Nar format such as padded headers, names, or file contents and queues them into a `pending_chunks` buffer. The `poll_next` function prioritizes draining this buffer to the consumer before processing further states from the stack. This ensures that even massive Git trees can be encoded and streamed incrementally without exceeding the server's RAM limits.
 
 
 == Nix Daemon
@@ -63,3 +101,5 @@ Gachix uses Git to store packages, which also identifies packages by their conte
 There was some effort made to adopt the same hashing scheme as Nix within Gachix. However, this was not finalized because it proved simpler to maintain a mapping between Nix hashes and Git hashes directly within Gachix. This approach offers the benefit of allowing input-addressed Nix hashes to be used for identifying packages in Gachix. Furthermore, the performance and storage overhead of using references, rather than the Git object hashes directly, is negligible. #todo[I probably have to prove this but I have no idea how]
 
 == Limitations
+
+
