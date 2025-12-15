@@ -1,3 +1,4 @@
+#import "@preview/dmi-basilea-thesis:0.1.1": *
 = Implementation
 
 This section explains how a binary cache was implemented using the ideas presented in @design. The objective was to create a store for Nix packages using Git and provide them using the common Nix cache interface. The name of this cache is Gachix and the source code is available on Github. #footnote[https://github.com/EphraimSiegfried/gachix]
@@ -54,5 +55,11 @@ There are few publicly available libraries that implement the Nix daemon protoco
 Gachix used the Gorgon module because it is the most generic implementation and it has most operations implemented which are needed in Gachix. It only lacks the operation to fetch Nars from Nix stores. This missing feature was implemented in a custom fork.
 
 == Content and Input Addressing Schemes
+
+Nix uses two methods to define the identity of packages. The prevalent way is to use the hash of the input dependency graph, which is stored in the derivation of a package. This type of identity is called input-addressed. The other method is to hash the Nar of a package, which is called content-addressing. 
+
+Gachix uses Git to store packages, which also identifies packages by their content. The difference between Nix and Git is that they use different hashing algorithms and hash different formats. While Nix uses SHA256 and hashes Nars, @git-internals-objects Git uses SHA1 and hashes its internal Git object format. @nixdev-content-address
+
+There was some effort made to adopt the same hashing scheme as Nix within Gachix. However, this was not finalized because it proved simpler to maintain a mapping between Nix hashes and Git hashes directly within Gachix. This approach offers the benefit of allowing input-addressed Nix hashes to be used for identifying packages in Gachix. Furthermore, the performance and storage overhead of using references, rather than the Git object hashes directly, is negligible. #todo[I probably have to prove this but I have no idea how]
 
 == Limitations

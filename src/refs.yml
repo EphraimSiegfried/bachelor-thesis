@@ -28,6 +28,12 @@ nixdev-nar:
   author: Nix Dev
   year: 2025
   url: {value: 'https://nix.dev/manual/nix/2.22/protocols/nix-archive', date: 2025-12-04}
+nixdev-content-address:
+  type: Web
+  title: Content-Addressing Store Objects
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.29/store/store-object/content-address', date: 2025-12-15}
 nixos-ca-derivations:
   type: Web
   title: Ca-derivations
