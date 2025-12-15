@@ -19,18 +19,18 @@ To test whether the retrieval speed of packages is acceptable, Gachix was compar
 
 === Methodology
 
-In this benchmark 500 random packages from the official Nix registry were added to the Nix store and to the Gachix cache. Each cache service was then started and for each package the Narinfo and the Nar was fetched. The end-to-end latency (request sent to full response received) was measured for each request.
+In this benchmark 1000 random packages from the official Nix registry were added to the Nix store and to the Gachix cache. Each cache service was then started and for each package the Narinfo and the Nar was fetched. The end-to-end latency (request sent to full response received) was measured for each request.
 
 === Result
-The average fetch latency for Narinfo is presented in @avg-narinfo-fetch-time. The average Narinfo retrieval speed is around 0.001 for almost all services except _nix-serve_, which has an average latency of 0.007 seconds. 
+The average fetch latency for Narinfo is presented in @avg-narinfo-fetch-time. The average Narinfo retrieval speed is around 0.001 for almost all services except _nix-serve_, which has an average latency of 0.0082 seconds. 
 
 #figure(image("../diagrams/avg-narinfo-fetch-time.png", width: 100%), caption: [Average Narinfo Fetch Time by Cache Service])<avg-narinfo-fetch-time>
 
-The average package fetch time by cache service is shown in @avg-pkg-fetch-time. With an average latency of 0.029 seconds _harmonia_ is the fastest cache service on average closely followed by _gachix_, which has an average latency of 0.027 seconds. 
+The average package fetch time by cache service is shown in @avg-pkg-fetch-time. With an average latency of 0.01159 seconds _harmonia_ is the fastest cache service on average closely followed by _gachix_, which has an average latency of 0.014278 seconds. 
 
 #figure(image("../diagrams/avg-pkg-fetch-time.png", width: 100%), caption: [Average Package Fetch Time by Cache Service])<avg-pkg-fetch-time>
 
-The pie chart in @fastest-services shows which services were the fastest among all services. The services _gachix_, _harmonia_ and _nix-serve-ng_  have an almost equal number of times where they served packages the fastest. Nevertheless _gachix_ has shown to be the fastest most times by having been fastest in 171 cases out of 500.
+The pie chart in @fastest-services shows which services were the fastest among all services. The services _gachix_, _harmonia_ and _nix-serve-ng_  have an almost equal number of times where they served packages the fastest. Nevertheless _gachix_ has shown to be the fastest most times by having been fastest in 474 cases out of 1000.
 
 #figure(image("../diagrams/fastest-services.png", width: 100%), caption: [Average Package Fetch Time by Cache Service])<fastest-services>
 
@@ -69,9 +69,9 @@ This benchmark compares the disk storage usage of Gachix to the cache services p
 
 === Methodology
 
-In this experiment, 500 randomly selected packages were added to both the Nix store and Gachix.
+In this experiment, 1000 randomly selected packages were added to both the Nix store and Gachix.
 
-To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 500 packages in the Nix store.
+To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 1000 packages in the Nix store.
 
 Note on Comparison: The sum of the package sizes in the Nix store serves as a lower-bound estimate for the storage required by other cache services. This estimate is conservative because it does not account for potential operational overhead or internal metadata that other caching mechanisms might introduce.
 
