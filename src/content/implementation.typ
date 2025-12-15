@@ -102,4 +102,11 @@ There was some effort made to adopt the same hashing scheme as Nix within Gachix
 
 == Limitations
 
+In the current implementation on Gachix a few features are missing that other Nix binary cache services provide. The most notable ones are:
 
+- Normally packages are sent as compressed Nars (most often compressed with `xz`). In the current implementation Gachix only sends plain Nars.
+- There is no command implemented which removes packages. However, this is rather easy to implement. It involves removing the reference of the package and calling the Git garbage collector.
+- The `.ls` Nix binary cache endpoint is not implemented. This endpoint normally lists the entries of a package.
+- Gachix is not capable of signing the Narinfo of a package.
+
+Furthermore, @add-closure-algo (@constructing-package-closures) can be enhanced by implementing a peer-selection heuristic designed to minimize the latency of package addition. The current algorithm is inefficient because it contacts peers in an arbitrary fixed order.
