@@ -1,5 +1,12 @@
+#import "@preview/dmi-basilea-thesis:0.1.1": *
 = Evaluation
 
+This section shows independently verifiable features of Gachix. The following claims about Gachix are made:
+
+1. Gachix is faster in package retrieval than existing cache implementations in 47.4 % of the cases but slower on average. (@pkg-retrieval-latency)
+2. Gachix is more storage efficient than other cache services. (@package-storage)
+3. Gachix can be deployed on any Unix machine, including on systems without Nix installed. (@unix-deployment)
+4. Gachix is transparent to Nix users as it can be used to fetch Nix packages using the Nix substituers interface. (@nix-transparency)
 
 == Functional Comparison to other Cache implementations <other-caches>
 
@@ -13,7 +20,7 @@ A notable difference between Gachix and the caches presented above is the other 
 
 On the other hand, the benefit of using Gachix is that it does not rely on any Nix infrastructure (such as the Nix store) and it can be deployed on a Unix machine without Nix installed. All other implementations expect that Nix is installed on the host machine.
 
-== Package Retrieval Latency
+== Package Retrieval Latency <pkg-retrieval-latency>
 
 To test whether the retrieval speed of packages is acceptable, Gachix was compared against the cache services presented in @other-caches. 
 
@@ -63,7 +70,7 @@ From the results we can conclude that _gachix_ is reasonably fast and can compet
 
 
 
-== Package Storage
+== Package Storage <package-storage>
 
 This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches. Given that all services use the Nix store and Gachix uses Git as its primary storage for Nix packages, the comparison is more accurately one between the Nix store and the Git database.
 
@@ -86,12 +93,29 @@ There are two reasons why we observe this size reduction. Firstly, Gachix compre
 
 Secondly, since the Git object database is a Merkle tree and every object is identified by its hash, identical files in the Nix store are only stored once in the Git database. This deduplication of files is also a reason why the size is smaller in Gachix.
 
-== Nix Transparency
+== Deployment on any Unix Machine <unix-deployment>
+
+This section shows that Gachix can be deployed on Unix machines without Nix installed.
+
+=== Methodology
+
+For this experiment a Dockerfile was written which can be found on the Gachix repository. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/Dockerfile] In this Dockerfile Gachix is built in an environment with Rust installed. After the Gachix binary is built, it is placed in a seperate Ubuntu container, where the binary will be run. The experiment proceeded as follows:
+
+- Clone the Gachix source repository
+- Build the docker container with `docker build <gachix-repository-path> . -t gachix`
+- Run the container with `docker run gachix`
+#todo[show that packages can be added to the binary cache, currently it starts the server with 0 packages. ]
+
+=== Result
+After executing these steps, we can see that Ubuntu container was able to replicate a package from a Nix host. It is also able to serve the package via the Nix binary interface.
+
+=== Discussion
+#todo[what should I write here?]
+
+== Nix Transparency <nix-transparency>
+#todo[Needs implementation]
+
 === Methodology
 === Result
 === Discussion
 
-== Deployment on any Unix Machine
-=== Methodology
-=== Result
-=== Discussion
