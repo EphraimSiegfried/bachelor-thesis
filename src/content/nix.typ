@@ -52,3 +52,11 @@ The most important endpoints of the binary cache API are:
 
 
 === Daemon Protocol
+
+The Nix daemon is a service which runs runs Nix specific operations on behalf of non-root users. Most of the operations it can execute, can also be run via the Nix command line interface (CLI). 
+
+The main purpose of the Nix daemon is for multi-user Nix installations. In this mode the Nix store is owned by some privileged user to prevent other users to manipulate the Nix store in a malicious way (e.g. install a Trojan horse). When users use the Nix CLI, control is forwarded to the Nix daemon which is run under the owner of the Nix store. In this scenario, commands to the Nix daemon are dispatched through interprocess communication either via the socket (located at `/nix/var/nix/daemon-socket/socket`). @nixdev-multi-user
+
+There is also another usage of the Nix daemon. Nix is able to connect to remote Nix machines and perform operations on them. The initializer can for example order builds (`nix build --builders <remote-url>`) on the remote machine and fetch packages from the remote store (`nix copy --from <remote-url> <nix-path>`). Internally, Nix does this by connecting to the remote machine via SSH and starting the Nix daemon with `nix daemon --stdio`. This command starts a Nix daemon on the remote machine and makes the remote daemon listen on standard I/O. Subsequently, both nodes communicate via the Nix daemon protocol. @nix-ssh-store
+
+The Nix protocol starts with a handshake, where both parties agree on the protocol version they will use. They also exchange some configuration options. Subsequently there are 47 operations the parties can issue by sending the corresponding Opcode. @nix-daemon-opcodes

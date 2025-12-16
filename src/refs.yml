@@ -28,6 +28,12 @@ nixdev-nar:
   author: Nix Dev
   year: 2025
   url: {value: 'https://nix.dev/manual/nix/2.22/protocols/nix-archive', date: 2025-12-04}
+nixdev-multi-user:
+  type: Web
+  title: Multi-User Mode
+  author: Nix Devhttps://github.com/NixOS/nix/blob/5f69fd3e8d99889c571f558113786bd05f0e38ee/src/libstore/ssh-store.cc#L201-L220
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.28/installation/multi-user', date: 2025-12-16}
 nixdev-content-address:
   type: Web
   title: Content-Addressing Store Objects
@@ -62,3 +68,15 @@ binary-cache-spec:
   title: Nix Binary Cache
   author: Zakaria, Farid
   url: {value: 'https://fzakaria.github.io/nix-http-binary-cache-api-spec/#/', date: 2025-12-04}
+nix-ssh-store:
+  type: Web
+  author: NixOS
+  title: nix
+  url: {value: 'https://github.com/NixOS/nix/blob/5f69fd3e8d99889c571f558113786bd05f0e38ee/src/libstore/ssh-store.cc#L201-L220', date: 2025-12-16}
+  note: Snippet from src/libstore/ssh-store.cc, lines 201-220
+  publisher: GitHub,
+nix-daemon-opcodes:
+  type: Web
+  author: Snix
+  title: Operations
+  url: {value: 'https://snix.dev/docs/reference/nix-daemon-protocol/operations/', date: 2025-12-16}
