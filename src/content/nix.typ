@@ -29,7 +29,7 @@ Package authors can also publish packages on a private registry and publish arti
 
 The Nix binary cache interface provides a set of endpoints with which a user can retrieve metadata of packages and package contents.
 
-Package contents are served in the Nar archive format @nixdev-nar. This format closely follows the abstract specification of a file system object tree.#todo[Improve explanation of Nar]
+Package contents are served in the NAR archive format @nixdev-nar. This format closely follows the abstract specification of a file system object tree.#todo[Improve explanation of NAR]
 
 Package metadata is served in the Narinfo format. It is a key value mapping with the following keys:
 - *StorePath*: The full store path
@@ -48,7 +48,7 @@ The most important endpoints of the binary cache API are:
 
 - `GET /<nix-hash>.narinfo`: Retrieves the Narinfo for a given Nix hash, i.e. the hash substring in the path of a package.
 - `HEAD /<nix-hash>.narinfo`: Used to check whether a package exists.
-- `GET /<url-in-narinfo>`: Returns the compressed nar. This endpoint is dependent on the endpoint given in the URL section of the Narinfo. Commonly, the endpoint is formed as `GET /nar/<nix-hash>.nar.<compression>`. @binary-cache-spec
+- `GET /<url-in-narinfo>`: Returns the compressed NAR. This endpoint is dependent on the endpoint given in the URL section of the Narinfo. Commonly, the endpoint is formed as `GET /nar/<nix-hash>.nar.<compression>`. @binary-cache-spec
 
 
 === Daemon Protocol

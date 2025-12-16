@@ -3,7 +3,7 @@
 
 This section explains how a binary cache was implemented using the ideas presented in @design. The objective was to create a store for Nix packages using Git and provide them using the common Nix cache interface. The name of this cache is Gachix and the source code is available on Github. #footnote[https://github.com/EphraimSiegfried/gachix]
 
-The project is written in the Rust programming language. This compiled language is ideal for ressource-intensive tasks such as parsing a large number of Nar files. The language is also optimal for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
+The project is written in the Rust programming language. This compiled language is ideal for ressource-intensive tasks such as parsing a large number of NAR files. The language is also optimal for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
 
 == Architecture
 
@@ -20,20 +20,20 @@ The package manager module is the core module. It is responsible for doing the N
 
 The Repository module is mainly a wrapper of the Rust library Git2 #footnote[https://github.com/rust-lang/git2-rs], which is a Rust wrapper of the C++ libgit implementation, which provides low-level Git operations. #footnote[https://libgit2.org/] The Repository module gives abstractions over common Git operations used for the binary cache, e.g. creating commit objects with constant author, message and date values.
 
-The Nix Daemon module is responsible for communicating to either the local Nix daemon (i.e. the daemon which runs on the same machine as Gachix) or to remote Nix Daemons via the SSH protocol. It contains code for setting up SSH connections, retrieving metadata about store paths and retrieving store objects in the Nar archive format. It depends on a custom fork of a library which implements the Nix daemon protocol.#footnote[https://codeberg.org/siegii/gorgon/src/branch/main/nix-daemon]  The fork includes low-level code for retrieving the Nar which did not exist in the original library.
+The Nix Daemon module is responsible for communicating to either the local Nix daemon (i.e. the daemon which runs on the same machine as Gachix) or to remote Nix Daemons via the SSH protocol. It contains code for setting up SSH connections, retrieving metadata about store paths and retrieving store objects in the NAR archive format. It depends on a custom fork of a library which implements the Nix daemon protocol.#footnote[https://codeberg.org/siegii/gorgon/src/branch/main/nix-daemon]  The fork includes low-level code for retrieving the NAR which did not exist in the original library.
 
 The Narinfo module constructs a Narinfo data structure from the Nix object metadata retrieved from the Nix daemon. It also is able to encode this metadata as a string, which is then stored as a blob in the Git database. Additionally, it signs the signature of the Narinfo and appends it to the narinfo (See @binary-cache-interface).
 
-The Nar module transforms trees to nars and vice versa. It is used to transform nars retrieved from Nix daemons to equivalent Git trees. It encodes trees as Nars when Nix cache clients request packages. It does not have to load the whole Git tree onto memory because it is able to stream the nar, i.e. decode the tree in chunks and serve these chunks continously.
+The NAR module transforms trees to NARs and vice versa. It is used to transform NARs retrieved from Nix daemons to equivalent Git trees. It encodes trees as NARs when Nix cache clients request packages. It does not have to load the whole Git tree onto memory because it is able to stream the NAR, i.e. decode the tree in chunks and serve these chunks continously.
 
 
 == Concurrency
 
 To increase the performance of the binary cache, it is crucial to handle requests concurrently. Concurrency can lead to inconsistent state or crashes if handled incorrectly. Inconsistent state happens most often when multiple threads modify the same objects. In Gachix this threat is eliminated by ensuring that threads never modify objects.
 
-Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a Nar and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads read the same object at the same time.
+Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a NAR and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads read the same object at the same time.
 
-Adding a package can happen by contacting other Gachix peers and fetching the needed Git objects from them. In this case, only new objects will be added to the Git database. Two threads cannot store two different objects with the same name because trees, blobs and commits are content addressed and references are named after unique Nix hashes. The only scenario that can happen is that two threads try to add the same object but this does not cause a conflict. When fetching Nars from Nix daemons they are transformed to equivalent Git trees. In this process, also only new objects are added.
+Adding a package can happen by contacting other Gachix peers and fetching the needed Git objects from them. In this case, only new objects will be added to the Git database. Two threads cannot store two different objects with the same name because trees, blobs and commits are content addressed and references are named after unique Nix hashes. The only scenario that can happen is that two threads try to add the same object but this does not cause a conflict. When fetching NARs from Nix daemons they are transformed to equivalent Git trees. In this process, also only new objects are added.
 
 Since all operations either read or add objects to the database, there is no conflict between multiple threads. Therefore no locking mechanisms have to be used when serving the packages concurrently.
 
@@ -67,15 +67,15 @@ directory-entry = str("entry"), str("("), str("name"), str(name), str("node"), n
 
 === Simple Encoder
 
-A simple approach to encode a given tree into a Nar is to explore the tree in a depth first search manner, retrieve the metadata about the objects and write this in a byte buffer according to the Nar format. Trees are mapped to directories, blobs to symlinks or regulars depending on their type. This approach is fine for shallow trees but is inefficient and can even lead to errors for large trees. This is because the buffer size can exceed the RAM limit for large packages.
+A simple approach to encode a given tree into a NAR is to explore the tree in a depth first search manner, retrieve the metadata about the objects and write this in a byte buffer according to the NAR format. Trees are mapped to directories, blobs to symlinks or regulars depending on their type. This approach is fine for shallow trees but is inefficient and can even lead to errors for large trees. This is because the buffer size can exceed the RAM limit for large packages.
 
 === Stream Encoder
 
-A more efficient approach is to stream data chunks to the client, allowing the Nar to be constructed incrementally. To enable this, Gachix implements the Stream trait from the futures crate (A Rust interface) for the encoder module. #footnote[https://docs.rs/futures/latest/futures/prelude/trait.Stream.html] Having implemented this trait allows the HTTP server library called Actix Web to asynchronously stream the Nar to the client. #footnote[https://docs.rs/actix-web/latest/actix_web/struct.HttpResponseBuilder.html#method.streaming] Implementing this trait requires implementing the function `poll_next` which returns the next chunk of bytes to be sent. Recursing the Git tree as in the first approach is not possible anymore because control has to be given back to the caller of `poll_next`. 
+A more efficient approach is to stream data chunks to the client, allowing the NAR to be constructed incrementally. To enable this, Gachix implements the Stream trait from the futures crate (A Rust interface) for the encoder module. #footnote[https://docs.rs/futures/latest/futures/prelude/trait.Stream.html] Having implemented this trait allows the HTTP server library called Actix Web to asynchronously stream the NAR to the client. #footnote[https://docs.rs/actix-web/latest/actix_web/struct.HttpResponseBuilder.html#method.streaming] Implementing this trait requires implementing the function `poll_next` which returns the next chunk of bytes to be sent. Recursing the Git tree as in the first approach is not possible anymore because control has to be given back to the caller of `poll_next`. 
 
 To address the inability to use standard recursion within the asynchronous `poll_next` method, the implementation replaces the call stack with an explicit state stack (`Vec<TraversalState>`). This transforms the traversal into an iterative state machine. The TraversalState enum captures the specific phase of visiting a node, i.e. whether the encoder is initializing a node (StartNode), iterating through a directory's children (ProcessTreeEntries), or closing a syntactic scope (FinishNode). When the encoder encounters a directory, instead of making a blocking recursive call, it simply pushes the corresponding states onto the stack. This effectively schedules the processing of child nodes and the finalize markers for future execution cycles, allowing the function to yield control back to the async runtime after every chunk.
 
-This architecture decouples the logic of tree traversal from the actual transmission of data. As the state machine advances, it serializes specific components of the Nar format such as padded headers, names, or file contents and queues them into a `pending_chunks` buffer. The `poll_next` function prioritizes draining this buffer to the consumer before processing further states from the stack. This ensures that even massive Git trees can be encoded and streamed incrementally without exceeding the server's RAM limits.
+This architecture decouples the logic of tree traversal from the actual transmission of data. As the state machine advances, it serializes specific components of the NAR format such as padded headers, names, or file contents and queues them into a `pending_chunks` buffer. The `poll_next` function prioritizes draining this buffer to the consumer before processing further states from the stack. This ensures that even massive Git trees can be encoded and streamed incrementally without exceeding the server's RAM limits.
 
 
 == Nix Daemon
@@ -90,13 +90,13 @@ There are few publicly available libraries that implement the Nix daemon protoco
 - *Harmonia*: Harmonia implements the Nix binary cache interface. It also implements the Nix daemon protocol for the client. #footnote[https://github.com/nix-community/harmonia/tree/main/harmonia-daemon]
 - *Gorgon*: Gorgon is a continous integration framework. It contains a submodule which implements both the client and server daemon protocol. #footnote[https://codeberg.org/gorgon/gorgon/src/branch/main/nix-daemon]
 
-Gachix used the Gorgon module because it is the most generic implementation and it has most operations implemented which are needed in Gachix. It only lacks the operation to fetch Nars from Nix stores. This missing feature was implemented in a custom fork.
+Gachix used the Gorgon module because it is the most generic implementation and it has most operations implemented which are needed in Gachix. It only lacks the operation to fetch NARs from Nix stores. This missing feature was implemented in a custom fork.
 
 == Content and Input Addressing Schemes
 
-Nix uses two methods to define the identity of packages. The prevalent way is to use the hash of the input dependency graph, which is stored in the derivation of a package. This type of identity is called input-addressed. The other method is to hash the Nar of a package, which is called content-addressing. 
+Nix uses two methods to define the identity of packages. The prevalent way is to use the hash of the input dependency graph, which is stored in the derivation of a package. This type of identity is called input-addressed. The other method is to hash the NAR of a package, which is called content-addressing. 
 
-Gachix uses Git to store packages, which also identifies packages by their content. The difference between Nix and Git is that they use different hashing algorithms and hash different formats. While Nix uses SHA256 and hashes Nars, @git-internals-objects Git uses SHA1 and hashes its internal Git object format. @nixdev-content-address
+Gachix uses Git to store packages, which also identifies packages by their content. The difference between Nix and Git is that they use different hashing algorithms and hash different formats. While Nix uses SHA256 and hashes NARs, @git-internals-objects Git uses SHA1 and hashes its internal Git object format. @nixdev-content-address
 
 There was some effort made to adopt the same hashing scheme as Nix within Gachix. However, this was not finalized because it proved simpler to maintain a mapping between Nix hashes and Git hashes directly within Gachix. This approach offers the benefit of allowing input-addressed Nix hashes to be used for identifying packages in Gachix. Furthermore, the performance and storage overhead of using references, rather than the Git object hashes directly, is negligible. #todo[I probably have to prove this but I have no idea how]
 
@@ -104,7 +104,7 @@ There was some effort made to adopt the same hashing scheme as Nix within Gachix
 
 In the current implementation on Gachix a few features are missing that other Nix binary cache services provide. The most notable ones are:
 
-- Normally packages are sent as compressed Nars (most often compressed with `xz`). In the current implementation Gachix only sends plain Nars.
+- Normally packages are sent as compressed NARs (most often compressed with `xz`). In the current implementation Gachix only sends plain NARs.
 - There is no command implemented which removes packages. However, this is rather easy to implement. It involves removing the reference of the package and calling the Git garbage collector.
 - The `.ls` Nix binary cache endpoint is not implemented. This endpoint normally lists the entries of a package.
 - Gachix is not capable of signing the Narinfo of a package.

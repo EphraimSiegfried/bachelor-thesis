@@ -26,7 +26,7 @@ To test whether the retrieval speed of packages is acceptable, Gachix was compar
 
 === Methodology
 
-In this benchmark 1000 random packages from the official Nix registry were added to the Nix store and to the Gachix cache. Each cache service was then started and for each package the Narinfo and the Nar was fetched. The end-to-end latency (request sent to full response received) was measured for each request.
+In this benchmark 1000 random packages from the official Nix registry were added to the Nix store and to the Gachix cache. Each cache service was then started and for each package the Narinfo and the NAR was fetched. The end-to-end latency (request sent to full response received) was measured for each request.
 
 === Result
 The average fetch latency for Narinfo is presented in @avg-narinfo-fetch-time. The average Narinfo retrieval speed is around 0.001 for almost all services except _nix-serve_, which has an average latency of 0.0082 seconds. 
@@ -45,9 +45,9 @@ The pie chart in @fastest-services shows which services were the fastest among a
 
 The reason why _nix-serve_ has a much slower latency than the other services is probably because Perl (the language that nix-serve was written in) is an interpreted language and all other languages are compiled.
 
-It is interesting that _gachix_ performs well in the package retrieval benchmark because it needs to decompress Git objects when constructing the Nars which the other services don't have to because everything in the Nix store is stored as decompressed.
+It is interesting that _gachix_ performs well in the package retrieval benchmark because it needs to decompress Git objects when constructing the NARs which the other services don't have to because everything in the Nix store is stored as decompressed.
 
-Gachix demonstrates strong performance, achieving a package latency very near the best average and proving to be the fastest in the majority of test cases. It is interesting that _gachix_ performs well because it needs to decompress Git objects when constructing the Nars which the other services don't have to because everything in the Nix store is stored as decompressed. 
+Gachix demonstrates strong performance, achieving a package latency very near the best average and proving to be the fastest in the majority of test cases. It is interesting that _gachix_ performs well because it needs to decompress Git objects when constructing the NARs which the other services don't have to because everything in the Nix store is stored as decompressed. 
 
 From the results we can conclude that _gachix_ is reasonably fast and can compete with other products in this area. 
 
