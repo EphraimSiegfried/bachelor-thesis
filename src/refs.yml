@@ -62,3 +62,18 @@ binary-cache-spec:
   title: Nix Binary Cache
   author: Zakaria, Farid
   url: {value: 'https://fzakaria.github.io/nix-http-binary-cache-api-spec/#/', date: 2025-12-04}
+snix-overview:
+  type: Web
+  title: Snix
+  author: Snix
+  url: {value: 'https://snix.dev/', date: 2025-12-16}
+snix-data-model:
+  type: Web
+  title: Data Model
+  author: Snix
+  url: {value: 'https://snix.dev/docs/components/castore/data-model/', date: 2025-12-16}
+snix-git-difference:
+  type: Web
+  title: Why not Git?
+  author: Snix
+  url: {value: 'https://snix.dev/docs/components/castore/why-not-git/', date: 2025-12-16}
