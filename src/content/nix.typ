@@ -52,7 +52,7 @@ directory-entry = str("entry"), str("("), str("name"), str(name), str("node"), n
 
 ```, caption: [Specification of the Nix Archive]) <nar-bnf>
 
-=== Narinfo
+=== Narinfo <narinfo>
 
 A Narinfo is a plaintext metadata file used in Nix binary caches to describe a store object and its associated NAR file. It contains key-value pairs separated by newlines, providing information for retrieving and verifying binary package data. @binary-cache-spec It contains the following keys:
 
@@ -79,7 +79,7 @@ The core endpoints of the API are:
 - `GET /<url>` Downloads the compressed NAR (Nix Archive). The exact path for this endpoint is defined dynamically within the URL field of the previously fetched Narinfo file. While the path is configurable, it often follows the pattern `GET /nar/<hash>.nar.<compression>`.
 
 
-=== Daemon Protocol
+=== Daemon Protocol <daemon-protocol>
 
 The Nix daemon is a service which runs runs Nix specific operations on behalf of non-root users. Most of the operations it can execute, can also be run via the Nix command line interface (CLI). 
 
