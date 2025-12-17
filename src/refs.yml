@@ -80,15 +80,18 @@ binary-cache-spec:
   title: Nix Binary Cache
   author: Zakaria, Farid
   url: {value: 'https://fzakaria.github.io/nix-http-binary-cache-api-spec/#/', date: 2025-12-04}
-nix-ssh-store:
+snix-overview:
   type: Web
-  author: NixOS
-  title: nix
-  url: {value: 'https://github.com/NixOS/nix/blob/5f69fd3e8d99889c571f558113786bd05f0e38ee/src/libstore/ssh-store.cc#L201-L220', date: 2025-12-16}
-  note: Snippet from src/libstore/ssh-store.cc, lines 201-220
-  publisher: GitHub,
-nix-daemon-opcodes:
-  type: Web
+  title: Snix
   author: Snix
-  title: Operations
-  url: {value: 'https://snix.dev/docs/reference/nix-daemon-protocol/operations/', date: 2025-12-16}
+  url: {value: 'https://snix.dev/', date: 2025-12-16}
+snix-data-model:
+  type: Web
+  title: Data Model
+  author: Snix
+  url: {value: 'https://snix.dev/docs/components/castore/data-model/', date: 2025-12-16}
+snix-git-difference:
+  type: Web
+  title: Why not Git?
+  author: Snix
+  url: {value: 'https://snix.dev/docs/components/castore/why-not-git/', date: 2025-12-16}
