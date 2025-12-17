@@ -3,7 +3,7 @@
 
 This section explains how a binary cache was implemented using the ideas presented in @design. The objective was to create a store for Nix packages using Git and provide them using the common Nix cache interface. The name of this cache is Gachix and the source code is available on Github. #footnote[https://github.com/EphraimSiegfried/gachix]
 
-The project is written in the Rust programming language. This compiled language is ideal for ressource-intensive tasks such as parsing a large number of NAR files. The language is also optimal for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
+The project is written in the Rust programming language. This compiled language is ideal for resource-intensive tasks such as parsing a large number of NAR files. The language is also optimal for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
 
 == Architecture
 
@@ -31,7 +31,7 @@ The NAR module transforms trees to NARs and vice versa. It is used to transform 
 
 To increase the performance of the binary cache, it is crucial to handle requests concurrently. Concurrency can lead to inconsistent state or crashes if handled incorrectly. Inconsistent state happens most often when multiple threads modify the same objects. In Gachix this threat is eliminated by ensuring that threads never modify objects.
 
-Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfors the referred package tree into a NAR and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads read the same object at the same time.
+Let us consider the two most prevalent operations: Retrieving and adding packages. When a package is retrieved, Gachix looks up the corresponding reference, transfers the referred package tree into a NAR and streams it to the user. The only operations involved in this process are read operations. It does not cause conflict when multiple threads read the same object at the same time.
 
 Adding a package can happen by contacting other Gachix peers and fetching the needed Git objects from them. In this case, only new objects will be added to the Git database. Two threads cannot store two different objects with the same name because trees, blobs and commits are content addressed and references are named after unique Nix hashes. The only scenario that can happen is that two threads try to add the same object but this does not cause a conflict. When fetching NARs from Nix daemons they are transformed to equivalent Git trees. In this process, also only new objects are added.
 
