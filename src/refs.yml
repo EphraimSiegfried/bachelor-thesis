@@ -22,6 +22,12 @@ nixdev-derivation-outputs:
   author: Nix Dev
   year: 2025
   url: {value: 'https://nix.dev/manual/nix/2.31/store/derivation/outputs/index.html', date: 2025-9-22}
+nixdev-objects:
+  type: Web
+  title: Store Object
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.32/store/store-object.html', date: 2025-12-16}
 nixdev-nar:
   type: Web
   title: Nix Archive (NAR) format
@@ -40,6 +46,12 @@ nixdev-content-address:
   author: Nix Dev
   year: 2025
   url: {value: 'https://nix.dev/manual/nix/2.29/store/store-object/content-address', date: 2025-12-15}
+nixdev-input-address:
+  type: Web
+  title: Input-addressing derivation outputs
+  author: Nix Dev
+  year: 2025
+  url: {value: 'https://nix.dev/manual/nix/2.32/store/derivation/outputs/input-address.html#input-addressing-derivation-outputs', date: 2025-12-16}
 nixos-ca-derivations:
   type: Web
   title: Ca-derivations

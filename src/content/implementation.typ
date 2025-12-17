@@ -39,31 +39,7 @@ Since all operations either read or add objects to the database, there is no con
 
 == Nix Archive
 
-When serving clients, Gachix encodes packages which are stored as Git trees into Nix Archives (Nars). The specification of the Nix Archive Format is shown in @nar-bnf. @nixdev-nar The _str_ function writes the size of the bytes to be written, the byte sequence specified and a padding of 0s to a multiple of 8 bytes.
-
-
-#figure(
-```
-nar = str("nix-archive-1"), nar-obj;
-
-nar-obj = str("("), nar-obj-inner, str(")");
-
-nar-obj-inner
-  = str("type"), str("regular") regular
-  | str("type"), str("symlink") symlink
-  | str("type"), str("directory") directory
-  ;
-
-regular = [ str("executable"), str("") ], str("contents"), str(contents);
-
-symlink = str("target"), str(target);
-
-(* side condition: directory entries must be ordered by their names *)
-directory = str("type"), str("directory") { directory-entry };
-
-directory-entry = str("entry"), str("("), str("name"), str(name), str("node"), nar-obj, str(")");
-
-```, caption: [Backus Naur Form of the Nix Archive]) <nar-bnf>
+When serving clients, Gachix encodes packages which are stored as Git trees into Nix Archives (Nars). The specification of the Nix Archive Format is shown in @nar-bnf (@nar).
 
 === Simple Encoder
 
