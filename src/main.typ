@@ -22,6 +22,10 @@
     alongside functional tests of the peer-to-peer replication and Nix interface.
   ],
 
+  acknowledgments: [
+   I would like to thank Prof. Dr. Christian Tschudin and Dr. Erick Lavoie for giving me the opportunity to work on this thesis. I especially thank Dr. Erick Lavoie for his guidance, patience and giving me a broader perspective. Many ideas presented in this thesis originate from the many fruitful discussions we had.
+  ],
+
   chapters: (
     include "content/introduction.typ",
     include "content/background.typ",
