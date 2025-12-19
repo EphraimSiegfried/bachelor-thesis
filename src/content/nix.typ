@@ -13,20 +13,20 @@ There are two primary methods for computing the hash. The standard approach is t
 
 To produce a package in Nix, a derivation has to be produced. A derivation is a build plan that specifies how to create one or more output objects in the Nix store (it has the `.drv` extension).  It also pins down the run and build time dependencies and specifies what the path of the output will be. It is an intermediate artifact generated when a Nix package expression is evaluated, analogous to an object file (`*.o`) in a C compilation process. 
 
-To build a derivation, Nix first ensures all dependent derivations are built. It then runs the builder in an isolated sandbox. In the sandbox only exclusively declared build and runtime dependencies can be accessed (e.g. `/bin` gets pruned from the environment variable `PATH`) and network access is limited. This makes component builders pure; when the deployer fails to specify a dependency explicitly, the component will fail deterministically. @dolstra-phd The result of the build process is an object in the Nix store. Subsequently, we denote the output objects as artifacts.
+To build a derivation, Nix first ensures all dependent derivations are built. It then runs the builder in an isolated sandbox. In the sandbox only explicitly declared build and runtime dependencies can be accessed (e.g. `/bin` gets pruned from the environment variable `PATH`) and network access is limited. This makes component builders pure; when the deployer fails to specify a dependency explicitly, the component will fail deterministically. @dolstra-phd The result of the build process is an object in the Nix store. Subsequently, we denote the output objects as artifacts.
  
 #figure(image("../diagrams/nix-pipeline.drawio.svg", width: 80%), caption: "Nix Deployment Pipeline") <nix-pipeline>
 
 If an author wants to share a package with others, the author needs to put the Nix expression which produces the artifact in a public registry. The official Nix registry called _Nixpkgs_ is the place where most packages get published. It is maintained as a Git repository stored on GitHub. To add a package there, the author needs to make a pull request with the new package expression to be added. The expression gets reviewed by a trusted set of community members. Once accepted, the Nix expression will be added to the registry.
 
-Users can build packages by specifying the registry and the name of the package. Nix will download the expression from the registry and produce a derivation. The derivation specifies the path of the artifact in the Nix store. To avoid building the artifacts locally, which can take a long time, users can benefit from binary caches, which are called substituers in Nix. With the default installation of Nix, there is only one substituer which is the official binary cache. #footnote[https://cache.nixos.org/] This cache has most artifacts which are in the official Nixpkgs registry. These official artifacts are build on Hydra, which is a continous build system. Using the package identifier retrieved from the derivation, Nix will fetch the package from the binary cache.
+Users can build packages by specifying the registry and the name of the package. Nix will download the expression from the registry and produce a derivation. The derivation specifies the path of the artifact in the Nix store. To avoid building the artifacts locally, which can take a long time, users can benefit from binary caches, which are called substituers in Nix. With the default installation of Nix, there is only one substituer which is the official binary cache. #footnote[https://cache.nixos.org/] This cache has most artifacts which are in the official Nixpkgs registry. These official artifacts are built on Hydra, which is a continous build system. Using the package identifier retrieved from the derivation, Nix will fetch the package from the binary cache.
 
-Package authors can also publish Nix expressions on a private registry and publish artifacts on a custom binary cache such as Cachix, which is a platform which both hosts and manages binary caches. #footnote[https://www.cachix.org]. The benefit of publishing on the Nixpkgs registry is that artifacts will be made available at the official cache, which is set as trusted and available in every Nix installation.
+Package authors can also publish Nix expressions on a private registry and publish artifacts on a custom binary cache such as Cachix, which is a platform which both hosts and manages binary caches. #footnote[https://www.cachix.org] The benefit of publishing on the Nixpkgs registry is that artifacts will be made available at the official cache, which is set as trusted and available in every Nix installation.
 
 
 === Nix Archive (NAR) Format <nar>
 
-Nix has a custom format for deserializing files and directories which is called Nix Archive (NAR). It is usually used to send packages over the network. It does not compress the contents of files.
+Nix has a custom format for deserializing files and directories which is called Nix Archive (NAR). It is used to send packages over the network. It does not compress the contents of files.
 The specification of the Nix Archive is displayed in @nar-bnf. The specification closely follows the Extended Backus-Naur form, except for the _str_ function, which writes the size of the bytes to be written, the byte sequence specified and a padding of 0s to a multiple of 8 bytes. @nixdev-nar
 
 #figure(
@@ -81,7 +81,7 @@ The core endpoints of the API are:
 
 === Daemon Protocol <daemon-protocol>
 
-The Nix daemon is a service which runs runs Nix specific operations on behalf of non-root users. Most of the operations it can execute, can also be run via the Nix command line interface (CLI). 
+The Nix daemon is a service which runs Nix specific operations on behalf of non-root users. Most of the operations it can execute, can also be run via the Nix command line interface (CLI). 
 
 The main purpose of the Nix daemon is for multi-user Nix installations. In this mode the Nix store is owned by some privileged user to prevent other users to manipulate the Nix store in a malicious way (e.g. install a Trojan horse). When users use the Nix CLI, control is forwarded to the Nix daemon which is run under the owner of the Nix store. In this scenario, commands to the Nix daemon are dispatched through interprocess communication either via the socket (located at `/nix/var/nix/daemon-socket/socket`). @nixdev-multi-user
 

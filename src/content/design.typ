@@ -8,11 +8,11 @@
 
 This chapter introduces how Nix concepts are mapped to the Git object model. @nix-filesystem displays a simple Nix store with a package called _foo_ which depends on packages _libfoo_ and _bar_. This section shows which transformations are taken to have an equivalent model in Git which is represented in @gachix-git-model.
 
-Much like the Git object database, the Nix Store is an immutable collection of data. Apart from packages the Nix store also stores source files, derivations, links and other types of objects. Since a binary cache only serves binary packages, we can focus on only those type of objects. 
+Much like the Git object database, the Nix Store is an immutable collection of data. Apart from packages, the Nix store also stores source files, derivations, links and other types of objects. Since a binary cache only serves binary packages, we can focus on only those type of objects. 
 
-Every top-level entry in the Nix store is uniquely addressable by some hash. There exist also files which are not uniquely addressable, which are inside those directories (e.g. a directory called 'bin'). When mapping Nix entries to Git objects we have to make sure that the corresponding objects in Git are also uniquely addressable. Fortunately, this is already the case in Git, because object in Git are content-addressed.
+Every top-level entry in the Nix store is uniquely addressable by some hash. There exist also files which are not uniquely addressable, which are inside those directories (e.g. a directory called 'bin'). When mapping Nix entries to Git objects we have to make sure that the corresponding objects in Git are also uniquely addressable. Fortunately, this is already the case in Git, because objects in Git are content-addressed.
 
-#figure(image("../diagrams/nix-filesystem.drawio.svg", width: 40%), caption: "Nix Store") <nix-filesystem>
+#figure(image("../diagrams/nix-filesystem.drawio.svg", width: 40%), caption: "Nix Store. The arrows indicate dependencies between packages.") <nix-filesystem>
 
 === Packages
 A Nix package is either a single file executable or a directory containing an executable. In Git, files can be mapped to blobs. This mapping will lose file metadata information: When constructing a blob from a file, and then reconstructing the file, it cannot be known whether the file is executable. 
@@ -28,7 +28,7 @@ Notice that after mapping Nix store entries to Git objects, the size of the data
 #figure(image("../diagrams/gachix-git-model.drawio.svg", width: 80%), caption: [Gachix Git object model after transforming the Nix store shown in @nix-filesystem])<gachix-git-model>
 
 === Dependency Management <dependency-management>
-In order to track which packages have which runtime dependencies, Nix manages a Sqlite database. This database tracks which Nix paths have references to other paths in the Nix store. @nix-db-schema This information helps Nix to copy package closures to other stores. A package closure is a set of store paths that are directly or transitively reachable from that store path. @nixdev-glossary Keeping track of references also prevents deleting packages which have references to them.
+In order to track which packages have which runtime dependencies, Nix manages a Sqlite database. This database records which Nix paths have references to other paths in the Nix store. @nix-db-schema This information helps Nix to copy package closures to other stores. A package closure is a set of store paths that are directly or transitively reachable from that store path. @nixdev-glossary Keeping track of references also prevents deleting packages which have references to them.
 
 In Gachix this dependency management is achieved using commit objects. For each package, a commit object is created where the commit tree is the tree containing the package contents as described above. The parents of the commit are the dependencies of the package which are also represented as commits. To find out what the dependency closure of a package called 'foo' is, we can recursively follow the parent pointers which is equivalent to running `git log <foo-commit-hash>`. To enable easy replication, we'll need to ensure that every package is globally associated with exactly one commit hash regardless of when and where it was created (more in @replication-protocol). To ensure this, for every commit on each replica the commit message, the time stamp and the author field of the commit are set to constant values. 
 

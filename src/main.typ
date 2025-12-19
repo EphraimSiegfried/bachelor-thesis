@@ -18,7 +18,7 @@
     This approach improves upon traditional input-addressable packages by reducing memory usage and enhancing trust.
     Leveraging Git provides a key advantage: simple peer-to-peer replication of the binary cache across multiple nodes.
     The core work involves modeling package dependency graphs and user profiles within Git and creating an interface for Nix to interact with this system.
-    The project will be evaluated through performance benchmarks measuring memory usage and package retrieval speed,
+    The project is evaluated through performance benchmarks measuring memory usage and package retrieval speed,
     alongside functional tests of the peer-to-peer replication and Nix interface.
   ],
 
