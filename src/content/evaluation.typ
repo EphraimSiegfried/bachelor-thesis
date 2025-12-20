@@ -8,6 +8,8 @@ This section shows independently verifiable features of Gachix. The following cl
 3. Gachix can be deployed on any Unix machine, including on systems without Nix installed. (@unix-deployment)
 4. Gachix is transparent to Nix users as it can be used to fetch Nix packages using the Nix substituers interface. (@nix-transparency)
 
+Because we compare Gachix with similar projects, we will present these projects in @other-caches. The specifications for the benchmarking environment are detailed in @machine-spec.
+
 == Functional Comparison to other Cache implementations <other-caches>
 
 There are a few projects which implement the Nix binary cache interface. The most notable ones are:
@@ -19,6 +21,10 @@ There are a few projects which implement the Nix binary cache interface. The mos
 A notable difference between Gachix and the caches presented above is the other caches directly use the Nix store for storing packages. If a Nix user wants to serve her packages with Gachix, she has to copy the packages from the Nix store to Gachix. With the other implementations, this is not necessary.
 
 On the other hand, the benefit of using Gachix is that it does not rely on any Nix infrastructure (such as the Nix store) and it can be deployed on a Unix machine without Nix installed. All other implementations expect that Nix is installed on the host machine.
+
+== Test Machine Specification <machine-spec>
+
+#todo[write specs: hardware annd software]
 
 == Package Retrieval Latency <pkg-retrieval-latency>
 
@@ -113,9 +119,30 @@ After executing these steps, we can see that Ubuntu container was able to replic
 #todo[what should I write here?]
 
 == Nix Transparency <nix-transparency>
-#todo[Needs implementation]
+This experiment verifies whether Gachix correctly implements the Nix binary interface. We confirm this by demonstrating that a user can successfully substitute (fetch) a package using the standard Nix command line tools backed by Gachix.
 
 === Methodology
+
+In this test we add the package _hello_ (a standard lightweight example frequently used for testing) to Gachix.   We then use the `nix build` command which will try to substitute the package by using binary caches. The experiment proceeds through the following steps:
+
++ We create a key pair which is used for signing Narinfos with ``` nix-store --generate-binary-cache-key my-gachix-cache key.private key.public```
++ We add a package to Gachix with ``` GACHIX__STORE__SIGN_PRIVATE_KEY_PATH=key.private gachix add $(nix build nixpkgs#hello --no-link --print-out-paths)```. The subcommand `nix build nixpkgs#hello --no-link --print-out-paths` will add the package _hello_ to the Nix store and print the path of the package to _stdout_. The environment variable `GACHIX__STORE__SIGN_PRIVATE_KEY_FILE` tells Gachix where the private key is located (this could have also been configured using a YAML file).
++ We remove the package from the local Nix store to prevent a local cache hit and ensure the package must be fetched remotely.: `nix store delete nixpkgs#hello`
++ We can now start the Gachix HTTP binary cache server with `gachix serve`. By default this listens on: `http://localhost:8080`.
++ Finally, we fetch the hello package again, explicitly designating the Gachix server as the substituter: ``` nix build nixpkgs#hello --substituters http://localhost:8080 --trusted-public-keys $(cat key.public) -vv --no-link```. Substituters and trusted public keys are normally specified in a Nix configuration file but can be overridden in the command line.
+
+Note that in this test the Nixpkgs registry is pinned to the commit hash `d9bc5c7dceb30d8d6fafa10aeb6aa8a48c218454`. However, this specific version does not affect the validity of the results.
+
 === Result
+
+Upon running the final command, the output logs should display the following:
+```
+copying path '/nix/store/2bcv91i8fahqghn8dmyr791iaycbsjdd-hello-2.12.2' from 'http://localhost:8080'...
+downloading 'http://localhost:8080/nar/cd533301f886090bb173bee7a3aaa67a2b140a8d.nar'...
+```
+
 === Discussion
+This output confirms that Nix successfully fetched the binary from Gachix. Without the `--substituters` and `--trusted-public-keys` flags, Nix would have ignored the server, built the package locally, and logged the compilation steps instead.
+
+Notice that setting `trusted-public-keys` only works if the user executing the Nix command is marked as trusted.
 
