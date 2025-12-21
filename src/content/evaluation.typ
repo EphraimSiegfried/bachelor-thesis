@@ -99,34 +99,52 @@ There are two reasons why we observe this size reduction. Firstly, Gachix compre
 
 Secondly, since the Git object database is a Merkle tree and every object is identified by its hash, identical files in the Nix store are only stored once in the Git database. This deduplication of files is also a reason why the size is smaller in Gachix.
 
-== Deployment on any Unix Machine <unix-deployment>
+== Deployment on Systems without Nix <unix-deployment>
 
 This section shows that Gachix can be deployed on Unix machines without Nix installed.
 
 === Methodology
 
-For this experiment a Dockerfile was written which can be found on the Gachix repository. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/Dockerfile] In this Dockerfile Gachix is built in an environment with Rust installed. After the Gachix binary is built, it is placed in a seperate Ubuntu container, where the binary will be run. The experiment proceeded as follows:
+In this experiment we will run Gachix inside a Docker container without Nix installed. We will then show that Gachix can populate its cache by fetching packages from remote Nix daemons. Gachix will add the package _hello_, a standard lightweight example package frequently used for testing. As the remote Nix daemon we will choose the daemon located at the host machine. Therefore this experiment only works on machines with Nix installed.
 
-- Clone the Gachix source repository
-- Build the docker container with `docker build <gachix-repository-path> . -t gachix`
-- Run the container with `docker run gachix`
-#todo[show that packages can be added to the binary cache, currently it starts the server with 0 packages. ]
+For this experiment a Dockerfile and Docker Compose file was written which can be found on the Gachix repository. In the Dockerfile, Gachix is built in an environment with Rust installed. After the Gachix binary is built, it is placed in a seperate Debian container, where the binary will be run. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/Dockerfile] The docker compose file places the necessary files inside the container and sets configuration values for Gachix. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/docker-compose.yml] The experiment proceeded as follows:
+
+- Generate a ssh key pair with: `ssh-keygen -t e25519 -N "" -f ~/.ssh/id_ed25519`
+- Add the following to the `configuration.nix` file :
+  ```nix
+  nix.sshServe.enable = true;
+  nix.sshServe.keys = [ "ssh-dss AAAAB3NzaC1k..." ];
+
+  ``` 
+  Ensure that the contents of the generated public key is inside the `keys` list. #footnote[https://nix.dev/manual/nix/2.18/package-management/ssh-substituter]
+- Clone the Gachix source repository with `git clone https://github.com/EphraimSiegfried/gachix.git`
+- Launch the container with `docker compose up`
+- Add a package to Gachix with `docker exec gachix_service /usr/local/bin/gachix add $(nix build nixpkgs#hello --print-out-paths --no-link)`. The subcommand `nix build nixpkgs#hello --no-link --print-out-paths` will add the package _hello_ to the Nix store and print the path of the package to _stdout_.
 
 === Result
-After executing these steps, we can see that Ubuntu container was able to replicate a package from a Nix host. It is also able to serve the package via the Nix binary interface.
+
+The last command should print out something similar to:
+
+```
+INFO gachix::git_store::repository: Using an existing Git repository at ./cache
+INFO gachix::git_store::store: Repository contains 0 packages
+INFO gachix::git_store::store: Succesfully connected to Nix daemon at host.docker.internal
+INFO gachix::git_store::store: Adding closure for hello-2.12.2
+INFO gachix::git_store::store: Added 5 packages
+```
 
 === Discussion
-#todo[what should I write here?]
+The output confirms that the container successfully connected to the host machine. Gachix communicated with the remote daemon to fetch the _hello_ package and its closure, resulting in the addition of 5 packages to the database. This demonstrates that Gachix operates effectively on systems without Nix installed and is capable of replicating packages using the Nix daemon protocol.
 
 == Nix Transparency <nix-transparency>
 This experiment verifies whether Gachix correctly implements the Nix binary interface. We confirm this by demonstrating that a user can successfully substitute (fetch) a package using the standard Nix command line tools backed by Gachix.
 
 === Methodology
 
-In this test we add the package _hello_ (a standard lightweight example frequently used for testing) to Gachix.   We then use the `nix build` command which will try to substitute the package by using binary caches. The experiment proceeds through the following steps:
+In this test we add the package _hello_ to Gachix. We then use the `nix build` command which will try to substitute the package by using binary caches. The experiment proceeds through the following steps:
 
 + We create a key pair which is used for signing Narinfos with ``` nix-store --generate-binary-cache-key my-gachix-cache key.private key.public```
-+ We add a package to Gachix with ``` GACHIX__STORE__SIGN_PRIVATE_KEY_PATH=key.private gachix add $(nix build nixpkgs#hello --no-link --print-out-paths)```. The subcommand `nix build nixpkgs#hello --no-link --print-out-paths` will add the package _hello_ to the Nix store and print the path of the package to _stdout_. The environment variable `GACHIX__STORE__SIGN_PRIVATE_KEY_FILE` tells Gachix where the private key is located (this could have also been configured using a YAML file).
++ We add a package to Gachix with ``` GACHIX__STORE__SIGN_PRIVATE_KEY_PATH=key.private gachix add $(nix build nixpkgs#hello --no-link --print-out-paths)```.  The environment variable `GACHIX__STORE__SIGN_PRIVATE_KEY_FILE` tells Gachix where the private key is located (this could have also been configured using a YAML file).
 + We remove the package from the local Nix store to prevent a local cache hit and ensure the package must be fetched remotely.: `nix store delete nixpkgs#hello`
 + We can now start the Gachix HTTP binary cache server with `gachix serve`. By default this listens on: `http://localhost:8080`.
 + Finally, we fetch the hello package again, explicitly designating the Gachix server as the substituter: ``` nix build nixpkgs#hello --substituters http://localhost:8080 --trusted-public-keys $(cat key.public) -vv --no-link```. Substituters and trusted public keys are normally specified in a Nix configuration file but can be overridden in the command line.
