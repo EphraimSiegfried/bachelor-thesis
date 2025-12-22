@@ -24,7 +24,7 @@ On the other hand, the benefit of using Gachix is that it does not rely on any N
 
 == Test Machine Specification <machine-spec>
 
-The experiments were performed on a desktop computer with the following hardware specification:
+The experiments were conducted on a desktop workstation with the following hardware configuration:
 
 - *CPU*: Intel Core i7-14700K (8 P-cores, 12 E-cores, 28 Threads) @ 5.60 GHz (Max Turbo)
 - *GPU*: AMD Radeon RX 6600 (8 GB GDDR6)
@@ -101,7 +101,7 @@ This section shows that Gachix can be deployed on Unix machines without Nix inst
 
 In this experiment we will run Gachix inside a Docker container without Nix installed. We will then show that Gachix can populate its cache by fetching packages from remote Nix daemons. Gachix will add the package _hello_, a standard lightweight example package frequently used for testing. As the remote Nix daemon we will choose the daemon located at the host machine. Therefore this experiment only works on machines with Nix installed.
 
-For this experiment a Dockerfile and Docker Compose file was written which can be found on the Gachix repository. In the Dockerfile, Gachix is built in an environment with Rust installed. After the Gachix binary is built, it is placed in a seperate Debian container, where the binary will be run. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/Dockerfile] The docker compose file places the necessary files inside the container and sets configuration values for Gachix. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/docker-compose.yml] The experiment proceeded as follows:
+For this experiment a Dockerfile and Docker Compose file was written which can be found on the Gachix repository. In the Dockerfile, Gachix is built in an environment with Rust installed. After the Gachix binary is built, it is placed in a separate Debian container, where the binary will be run. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/Dockerfile] The docker compose file places the necessary files inside the container and sets configuration values for Gachix. #footnote[https://github.com/EphraimSiegfried/gachix/blob/master/docker-compose.yml] The experiment proceeded as follows:
 
 - Generate a ssh key pair with: `ssh-keygen -t e25519 -N "" -f ~/.ssh/id_ed25519`
 - Add the following to the `configuration.nix` file :

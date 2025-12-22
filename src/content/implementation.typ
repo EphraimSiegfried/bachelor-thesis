@@ -3,7 +3,7 @@
 
 This section explains how a binary cache was implemented using the ideas presented in @design. The objective was to create a store for Nix packages using Git and provide them using the common Nix cache interface. The name of this cache is Gachix and the source code is available on Github. #footnote[https://github.com/EphraimSiegfried/gachix]
 
-The project is written in the Rust programming language. This compiled language is ideal for resource-intensive tasks such as parsing a large number of NAR files. The language is also effective for concurrent task, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
+The project is written in the Rust programming language. This compiled language is ideal for resource-intensive tasks such as parsing a large number of NAR files. The language is also effective for concurrent tasks, which is used in Gachix for serving multiple connections at once. Rust guarantees memory and thread safety. It eliminates many classes of bugs (e.g. use after free) at compile time.
 
 == Architecture
 
