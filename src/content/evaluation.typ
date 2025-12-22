@@ -24,7 +24,19 @@ On the other hand, the benefit of using Gachix is that it does not rely on any N
 
 == Test Machine Specification <machine-spec>
 
-#todo[write specs: hardware annd software]
+The experiments were performed on a desktop computer with the following hardware specification:
+
+- *CPU*: Intel Core i7-14700K (8 P-cores, 12 E-cores, 28 Threads) @ 5.60 GHz (Max Turbo)
+- *GPU*: AMD Radeon RX 6600 (8 GB GDDR6)
+- *Memory*: 32 GiB DDR5 @ 6000 MT/s 
+- *Storage*: Kingston's NV2 PCIe 4.0 NVMe SSD (Partition size: 239.25 GiB)
+- *Swap*: Disabled
+
+The software environment includes:
+- *Operating System*: NixOS 25.11 (Xantusia)
+- *Kernel*: Linux 6.12.60
+- *Nix Version*: 2.31.2
+- *Nixpkgs Commit Hash*: 28bb483c11a1214a73f9fd2d9928a6e2ea86ec71
 
 == Package Retrieval Latency <pkg-retrieval-latency>
 
@@ -56,24 +68,6 @@ It is interesting that _gachix_ performs well in the package retrieval benchmark
 Gachix demonstrates strong performance, achieving a package latency very near the best average and proving to be the fastest in the majority of test cases. It is interesting that _gachix_ performs well because it needs to decompress Git objects when constructing the NARs which the other services don't have to because everything in the Nix store is stored as decompressed. 
 
 From the results we can conclude that _gachix_ is reasonably fast and can compete with other products in this area. 
-
-// #figure( table(  
-//   columns: (1fr, auto, auto),
-//   inset: 10pt,
-//   align: horizon,
-//   table.header(
-//     [*Service*], [*Package Retrieval Speed*], [*Narinfo Retrieval Speed*]
-//   )
-//   , [nix-serve], [0.122157], [0.001182],
-//     [nix-serve-ng], [0.120619], [0.008471],
-//     [harmonia], [0.086700], [0.001321],
-//     [gachix], [0.072806], [0.001087]
-// )
-// , caption: [Average Package and Narinfo Fetch Time by Cache Service])<avg-fetch-time>
-
-// #figure(image("../diagrams/average-fetch-time.png", width: 100%), caption: [Average Package and Narinfo Fetch Time by Cache Service])<avg-fetch-time>
-
-
 
 
 == Package Storage <package-storage>
@@ -148,8 +142,6 @@ In this test we add the package _hello_ to Gachix. We then use the `nix build` c
 + We remove the package from the local Nix store to prevent a local cache hit and ensure the package must be fetched remotely.: `nix store delete nixpkgs#hello`
 + We can now start the Gachix HTTP binary cache server with `gachix serve`. By default this listens on: `http://localhost:8080`.
 + Finally, we fetch the hello package again, explicitly designating the Gachix server as the substituter: ``` nix build nixpkgs#hello --substituters http://localhost:8080 --trusted-public-keys $(cat key.public) -vv --no-link```. Substituters and trusted public keys are normally specified in a Nix configuration file but can be overridden in the command line.
-
-Note that in this test the Nixpkgs registry is pinned to the commit hash `d9bc5c7dceb30d8d6fafa10aeb6aa8a48c218454`. However, this specific version does not affect the validity of the results.
 
 === Result
 
