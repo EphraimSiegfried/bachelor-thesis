@@ -26,9 +26,9 @@ On the other hand, the benefit of using Gachix is that it does not rely on any N
 
 The experiments were conducted on a desktop workstation with the following hardware configuration:
 
-- *CPU*: Intel Core i7-14700K (8 P-cores, 12 E-cores, 28 Threads) @ 5.60 GHz (Max Turbo)
+- *CPU*: Intel Core i7-14700K (8 P-cores, 12 E-cores, 28 Threads) \@ 5.60 GHz (Max Turbo)
 - *GPU*: AMD Radeon RX 6600 (8 GB GDDR6)
-- *Memory*: 32 GiB DDR5 @ 6000 MT/s 
+- *Memory*: 32 GiB DDR5 \@ 6000 MT/s 
 - *Storage*: Kingston's NV2 PCIe 4.0 NVMe SSD (Partition size: 239.25 GiB)
 - *Swap*: Disabled
 
