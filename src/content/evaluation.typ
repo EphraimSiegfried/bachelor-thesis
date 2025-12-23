@@ -3,12 +3,12 @@
 
 This section shows independently verifiable features of Gachix. The following claims about Gachix are made:
 
-1. Gachix is faster in package retrieval than existing cache implementations in 47.4 % of the cases but slower on average. (@pkg-retrieval-latency)
+1. Gachix achieves the lowest median latency but shows slower average performance. (@pkg-retrieval-latency)
 2. Gachix is more storage efficient than other cache services. (@package-storage)
 3. Gachix can be deployed on any Unix machine, including on systems without Nix installed. (@unix-deployment)
 4. Gachix is transparent to Nix users as it can be used to fetch Nix packages using the Nix substituers interface. (@nix-transparency)
 
-Because we compare Gachix with similar projects, we will present these projects in @other-caches. The specifications for the benchmarking environment are detailed in @machine-spec.
+Because we compare Gachix with similar projects, we will present these projects in @other-caches The specifications for the benchmarking environment are detailed in @machine-spec
 
 == Functional Comparison to other Cache implementations <other-caches>
 
@@ -18,7 +18,7 @@ There are a few projects which implement the Nix binary cache interface. The mos
 - *nix-serve-ng*: This is the successor of nix-serve. It is written in Haskell. #footnote[https://github.com/aristanetworks/nix-serve-ng]
 - *harmonia*: This is a modern implementation of the binary cache interface with many features. #footnote[https://github.com/nix-community/harmonia] It is written in Rust.
 
-A notable difference between Gachix and the caches presented above is the other caches directly use the Nix store for storing packages. If a Nix user wants to serve her packages with Gachix, she has to copy the packages from the Nix store to Gachix. With the other implementations, this is not necessary.
+A notable difference between Gachix and the caches presented above is the other caches directly use the Nix store for storing packages. In contrast, if a Nix user wants to serve her packages with Gachix, she has to copy the packages from the Nix store to Gachix. With the other implementations, this is not necessary.
 
 On the other hand, the benefit of using Gachix is that it does not rely on any Nix infrastructure (such as the Nix store) and it can be deployed on a Unix machine without Nix installed. All other implementations expect that Nix is installed on the host machine.
 
@@ -40,43 +40,83 @@ The software environment includes:
 
 == Package Retrieval Latency <pkg-retrieval-latency>
 
-To test whether the retrieval speed of packages is acceptable, Gachix was compared against the cache services presented in @other-caches. 
+To test whether the retrieval speed of packages is acceptable, Gachix was compared against the cache services presented in @other-caches
 
-=== Methodology
+=== Methodology <pkg-retrieval-latency-methodology>
 
-In this benchmark 1000 random packages from the official Nix registry were added to the Nix store and to the Gachix cache. Each cache service was then started and for each package the Narinfo and the NAR was fetched. The end-to-end latency (request sent to full response received) was measured for each request.
+In this benchmark, the process began by retrieving the full collection of packages from the _nixos-24.11_ and _nixos-25.11_ branches of the Nixpkgs registry, which represent two distinct stable releases. These packages were compiled into two separate lists, from which 325 items were randomly selected. The resulting 650 packages, along with every required dependency, were built and stored locally in the Nix Store before being added to the Gachix cache. This resulted in 5123 packages that were added both to the Nix store and Gachix.
+
+The selection of packages is representative because it is a subset of packages the official binary cache stores. Having packages from two distinct releases ensures coverage across different software versions and ecosystem states.
+
+To evaluate performance, each cache service was initialized on the same machine as the benchmarking tool to minimize network interference. The benchmark then iteratively requested both the Narinfo and the Nix Archive for every package. During this process, the system recorded the end-to-end latency (request send to full respons received) for each request.
+
+The list of packages and all measurements can be found in the benchmarking tool repository. #footnote[https://github.com/EphraimSiegfried/thesis-metrics]
 
 === Result
-The average fetch latency for Narinfo is presented in @avg-narinfo-fetch-time. The average Narinfo retrieval speed is around 0.001 for almost all services except _nix-serve_, which has an average latency of 0.0082 seconds. 
+The median, 95th percentile, 99th percentile, the maximum, mean and standard derivation were computed over all 5123 packages for each cache service. These computations are presented in @narinfo-stats for the Narinfo latency and in @nar-stats for the NAR latency.
 
-#figure(image("../diagrams/avg-narinfo-fetch-time.png", width: 100%), caption: [Average Narinfo Fetch Time by Cache Service])<avg-narinfo-fetch-time>
+#figure(
+  table(
+    columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+    inset: 6pt,
+    align: (left, right, right, right, right, right, right),
+    stroke: none,
+    table.hline(stroke: 1pt),
+    [*Cache Service*], [*Median*], [*p95*], [*p99*], [*Max*], [*Mean*], [*Std*],
+    table.hline(stroke: 0.5pt),
+    [gachix], [0.849], [1.592], [2.812], [8.844], [0.947], [0.417],
+    [harmonia], [2.960], [4.469], [4.881], [31.970], [2.673], [1.333],
+    [nix-serve], [4.026], [11.455], [13.151], [19.473], [5.178], [2.710],
+    [nix-serve-ng], [1.006], [1.985], [3.027], [23.982], [1.127], [0.581],
+    table.hline(stroke: 1pt),
+  ),
+  caption: [Summary Statistics for Narinfo Latency (ms)]
+) <narinfo-stats>
 
-The average package fetch time by cache service is shown in @avg-pkg-fetch-time. With an average latency of 0.01159 seconds _harmonia_ is the fastest cache service on average closely followed by _gachix_, which has an average latency of 0.014278 seconds. 
+#figure(
+  table(
+    columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+    inset: 6pt,
+    align: (left, right, right, right, right, right, right),
+    stroke: none,
+    table.hline(stroke: 1pt),
+    [*Cache Service*], [*Median*], [*p95*], [*p99*], [*Max*], [*Mean*], [*Std*],
+    table.hline(stroke: 0.5pt),
+    [gachix], [4.812], [142.129], [840.199], [9931.217], [49.347], [327.198],
+    [harmonia], [8.530], [119.514], [604.240], [3316.529], [41.912], [146.475],
+    [nix-serve], [42.063], [101.205], [447.337], [2749.474], [57.757], [107.114],
+    [nix-serve-ng], [7.689], [105.879], [616.550], [4832.431], [37.989], [182.101],
+    table.hline(stroke: 1pt),
+  ),
+  caption: [Summary Statistics for NAR Latency (ms)]
+) <nar-stats>
 
-#figure(image("../diagrams/avg-pkg-fetch-time.png", width: 100%), caption: [Average Package Fetch Time by Cache Service])<avg-pkg-fetch-time>
+The data is visualized as a boxplot in @boxplots. Notice that the outliers are not visualized.
 
-The pie chart in @fastest-services shows which services were the fastest among all services. The services _gachix_, _harmonia_ and _nix-serve-ng_  have an almost equal number of times where they served packages the fastest. Nevertheless _gachix_ has shown to be the fastest most times by having been fastest in 474 cases out of 1000.
+#figure(image("../diagrams/latency_boxplots.png", width: 100%), caption: [Narinfo Latency Distribution (No outliers)]) <boxplots>
 
-#figure(image("../diagrams/fastest-services.png", width: 100%), caption: [Average Package Fetch Time by Cache Service])<fastest-services>
+The scatter plot in @pkg-size-vs-latency illustrates the relationship between package size and latency, with each individual measurement represented as a single point.
+
+#figure(image("../diagrams/size_vs_latency.png", width: 100%), caption: [Package size vs Latency])<pkg-size-vs-latency>
 
 === Discussion
 
+From the data we can see that Gachix has the lowest median and lowest mean latency followed by nix-serve-ng when serving Narinfos. 
+
+When serving NARs, Gachix has the lowest median latency of (4.8 ms) but has the second highest mean latency. The reason for this observation is that Gachix usually performs well but has a few extreme outliers in which it performs badly. These outliers can be seen in @pkg-size-vs-latency, where measurements where the latency is larger than one second is mostly from Gachix. All of these outliers have in common, that the packages are larger than 136.5 MB. This suggests that Gachix is slower when serving large files but indicates good performance for small to medium sized files.
+
 The reason why _nix-serve_ has a much slower latency than the other services is probably because Perl (the language that nix-serve was written in) is an interpreted language and all other languages are compiled.
-
-It is interesting that _gachix_ performs well in the package retrieval benchmark because it needs to decompress Git objects when constructing the NARs which the other services don't have to because everything in the Nix store is stored as decompressed.
-
-Gachix demonstrates strong performance, achieving a package latency very near the best average and proving to be the fastest in the majority of test cases. It is interesting that _gachix_ performs well because it needs to decompress Git objects when constructing the NARs which the other services don't have to because everything in the Nix store is stored as decompressed. 
 
 From the results we can conclude that _gachix_ is reasonably fast and can compete with other products in this area. 
 
 
 == Package Storage <package-storage>
 
-This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches. Given that all services use the Nix store and Gachix uses Git as its primary storage for Nix packages, the comparison is more accurately one between the Nix store and the Git database.
+This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches. 
 
 === Methodology
 
-In this experiment, 1000 randomly selected packages were added to both the Nix store and Gachix.
+In this experiment, 5123 randomly selected packages from Nixpkgs were added to both the Nix store and Gachix. It's the same packages as specified in @pkg-retrieval-latency-methodology
 
 To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 1000 packages in the Nix store.
 
@@ -85,13 +125,15 @@ Note on Comparison: The sum of the package sizes in the Nix store serves as a lo
 
 === Result
 
-The sum of the package sizes in the Nix store is 3.88 GB. The size of the `.git` repository is 0.68 GB. This is a size reduction of 82.47%.
+The sum of the package sizes in the Nix store is 77.84 GB. The size of the `.git` repository is 13.45 GB. This is a size reduction of 82.72%.
 
 === Discussion
 
-There are two reasons why we observe this size reduction. Firstly, Gachix compresses its objects using zlib. @git-internals-objects. The Nix store does not contain any compressed packages. 
+We believe there are two primary reasons why we observe this size reduction. 
 
-Secondly, since the Git object database is a Merkle tree and every object is identified by its hash, identical files in the Nix store are only stored once in the Git database. This deduplication of files is also a reason why the size is smaller in Gachix.
+Firstly, Gachix compresses its objects using zlib. @git-internals-objects The Nix store does not contain any compressed packages. 
+
+Secondly, since the Git object database is a Merkle tree and every object is identified by its hash, identical files in the Nix store are only stored once in the Git database. We have computed the amount of objects that have an indegree greater than one, i.e. the objects which are pointed by more than one tree. #footnote[https://github.com/EphraimSiegfried/gitics/tree/master] We found that out of the 706,848 unique objects reached, 154,371 (21.84%) had an indegree larger than one. This deduplication of files is also a reason why the size is smaller in Gachix.
 
 == Deployment on Systems without Nix <unix-deployment>
 
