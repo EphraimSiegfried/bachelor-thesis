@@ -11,10 +11,10 @@ A high-level overview of the implementation can be seen in @gachix-architecture.
 
 The Command Line Interface (CLI) module gives a friendly interface for interacting with the cache. It also manages the state of the configuration for the binary cache. Gachix can be configured via environment variables or a YAML configuration file. The CLI module merges the configuration options coming from these different sources. With the CLI, the user can start the web server or add a package (and all its dependencies) to the cache.
 
-#figure(image("../diagrams/gachix-architecture.drawio.svg", width: 80%), caption: "Gachix Architecture Overview") <gachix-architecture>
+#figure(image("../diagrams/gachix-architecture.drawio.pdf", width: 80%), caption: "Gachix Architecture Overview") <gachix-architecture>
 
 
-The web server implements the Nix binary interface ( See @binary-cache-interface) and serves clients which connect to it via HTTP. It makes requests to the internal package manager module and forwards responses from it to clients.
+The web server implements the Nix binary interface (see @binary-cache-interface) and serves clients which connect to it via HTTP. It makes requests to the internal package manager module and forwards responses from it to clients.
 
 The package manager module is the core module. It is responsible for doing the Nix to Git mapping discussed in @nix-to-git It also includes the _add_closure_ algorithm discussed in @constructing-package-closures
 
@@ -39,7 +39,7 @@ Since all operations either read or add objects to the database, there is no con
 
 == Nix Archive
 
-When serving clients, Gachix encodes packages which are stored as Git trees into Nix Archives (Nars). The specification of the Nix Archive Format is shown in @nar-bnf (@nar).
+When serving clients, Gachix encodes packages which are stored as Git trees into Nix Archives (NARs). The specification of the Nix Archive Format is shown in @nar-bnf (@nar).
 
 === Simple Encoder
 
@@ -72,7 +72,7 @@ Gachix used the Gorgon module because it is the most generic implementation and 
 
 Nix uses two methods to define the identity of packages. The prevalent way is to use the hash of the input dependency graph, which is stored in the derivation of a package. This type of identity is called input-addressed. The other method is to hash the NAR of a package, which is called content-addressing. 
 
-Gachix uses Git to store packages, which also identifies packages by their content. The difference between Nix and Git is that they use different hashing algorithms and hash different formats. While Nix uses SHA256 and hashes NARs, @git-internals-objects Git uses SHA1 and hashes its internal Git object format. @nixdev-content-address
+Gachix uses Git to store packages, which also identifies packages by their content. However, the two systems differ in their hashing algorithms, object formats, and encoding methods. While Nix typically employs SHA-256 to hash Nix Archives (NARs) @nixdev-content-address, Git relies on SHA-1 to hash its internal object format @git-internals-objects. Furthermore, their representation of these hashes diverges: Git represents digests using hexadecimal encoding, whereas Nix traditionally uses a specialized base-32 encoding.
 
 There was some effort made to adopt the same hashing scheme as Nix within Gachix. However, this was not finalized because it proved simpler to maintain a mapping between Nix hashes and Git hashes directly within Gachix. This approach offers the benefit of allowing input-addressed Nix hashes to be used for identifying packages in Gachix. Furthermore, we believe that the performance and storage overhead of using references, rather than the Git object hashes directly, is negligible.
 
@@ -83,6 +83,5 @@ In the current implementation on Gachix a few features are missing that other Ni
 - Normally packages are sent as compressed NARs (most often compressed with `xz`). In the current implementation Gachix only sends plain NARs.
 - There is no command implemented which removes packages. However, this is rather easy to implement. It involves removing the reference of the package and calling the Git garbage collector.
 - The `.ls` Nix binary cache endpoint is not implemented. This endpoint normally lists the entries of a package.
-- Gachix is not capable of signing the Narinfo of a package.
 
 Furthermore, @add-closure-algo (@constructing-package-closures) can be enhanced by implementing a peer-selection heuristic designed to minimize the latency of package addition. The current algorithm is inefficient because it contacts peers in an arbitrary fixed order.

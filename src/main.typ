@@ -1,14 +1,14 @@
-#import "@preview/dmi-basilea-thesis:0.1.1": *
+#import "dmi-basilea-thesis/src/main.typ": *
 
 #show: thesis.with(
-  draft: true,
+  draft: false,
   title: "Gachix:\n A binary cache for Nix over Git",
   author: "Ephraim Siegfried",
-  email: "e.siegfried@unibas.ch",
+  email: "ephraim.siegfried@proton.me",
   supervisor: "Dr. Erick Lavoie",
   examiner: "Prof. Dr. Christian Tschudin",
-  faculty: "Department of Computer Science",
-  website: "cn.dmi.unibas.ch",
+  faculty: "University of Basel - Faculty of Science",
+  website: link("https://cn.dmi.unibas.ch")[cn.dmi.unibas.ch],
   thesis-type: "Bachelor Thesis",
   research-group: "Computer Networks Group",
   date: datetime.today(),

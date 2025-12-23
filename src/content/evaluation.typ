@@ -112,13 +112,13 @@ From the results we can conclude that _gachix_ is reasonably fast and can compet
 
 == Package Storage <package-storage>
 
-This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches. 
+This benchmark compares the disk storage usage of Gachix to the cache services presented in @other-caches 
 
 === Methodology
 
 In this experiment, 5123 randomly selected packages from Nixpkgs were added to both the Nix store and Gachix. It's the same packages as specified in @pkg-retrieval-latency-methodology
 
-To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 1000 packages in the Nix store.
+To assess storage consumption, the total storage used by Gachix was measured by the size of its `.git` directory. This was compared against the sum of the size of all 5123 packages in the Nix store.
 
 Note on Comparison: The sum of the package sizes in the Nix store serves as a lower-bound estimate for the storage required by other cache services. This estimate is conservative because it does not account for potential operational overhead or internal metadata that other caching mechanisms might introduce.
 

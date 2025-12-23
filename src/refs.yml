@@ -10,6 +10,7 @@ dolstra-phd:
   author: Dolstra, Eelco
   date: 2006-2
   publisher: Utrecht University
+  genre: PhD Thesis
   title: The Purely Functional Software Deployment Model
 nixdev-derivation:
   type: Web
