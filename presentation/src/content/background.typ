@@ -8,9 +8,15 @@
 
 #slide[
   === Nix Package Manager
-  - Functional Language
+  - Declarative and *functional package manager*
   #pause
-  - Lol
+  - Enforces *reproducibility* in package builds:
+    #pause
+    - All dependendencies must be specified
+    #pause
+    - Building a Nix expression twice yields same result
+    
+
 
 ][
   #meanwhile
@@ -21,10 +27,15 @@
 ---
 #slide[
   === Nix Store
-  - Collection of packages, source files etc.
-  - Contains immutable
+  - *Collection of packages* and other data
   #pause
-  - Lol
+  - Each entry is *immutable*
+  #pause
+  - Uniquely *identified by hash* of dependency graph
+  #pause
+  - Entries are of the form:
+
+    `/nix/store/<hash>-<name>-<version>`
 
 ][
   #meanwhile
@@ -36,6 +47,26 @@
 
 #set align(center)
 #image("../diagrams/nix-pipeline.drawio.pdf", width: 60%)
+
+---
+#set align(left)
+#slide[
+  === Binary Cache Protocol
+  - Occurs when executing: #linebreak()
+    `nix build <some-package>`
+  - Protocol over HTTPS
+  #pause
+  - User asks for *Narinfo*, which contains URL to package contents
+  #pause
+  - Receives package in the *Nix Archive* (NAR) format
+
+
+][
+  #meanwhile
+  #set align(center)
+  #image("../diagrams/binary-cache-protocol.drawio.pdf", width: 80%)
+
+]
 
 
 == Git
@@ -98,6 +129,13 @@
   #set align(center)
   #image("../diagrams/git-references.drawio.pdf", width:100%)
 ]
+
+---
+=== Git Objects
+- Git objects are *immutable*
+  #pause
+- Blobs, trees and commits are *content-addressed* (stored in `.git/objects`)
+- References are identified by their name (stored in `.git/refs`)
 
 ---
 
