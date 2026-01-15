@@ -355,7 +355,7 @@
         <mxCell id="Kymk-h5hWkmSirpjtpHw-178" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&quot;foo&quot;&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="180" y="-110" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="Kymk-h5hWkmSirpjtpHw-183" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&quot;foolib&quot;&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" parent="1" vertex="1">
+        <mxCell id="Kymk-h5hWkmSirpjtpHw-183" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&quot;libfoo&quot;&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="440" y="100" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Kymk-h5hWkmSirpjtpHw-184" value="" style="endArrow=blockThin;html=1;rounded=0;endFill=1;" parent="1" target="Kymk-h5hWkmSirpjtpHw-127" edge="1">
