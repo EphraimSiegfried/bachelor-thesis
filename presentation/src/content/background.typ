@@ -45,8 +45,21 @@
 
 ---
 
-#set align(center)
-#image("../diagrams/nix-pipeline.drawio.pdf", width: 60%)
+#slide[
+  === Deployment Pipeline
+  - Nix produces packages from Nix files
+  - A Nix file is a build recipe for a package
+  #pause
+  - Building a package can take a long time #linebreak()
+    $arrow.r$ Use binary caches to speed up builds
+    
+
+
+][
+  #meanwhile
+  #set align(center)
+  #image("../diagrams/nix-pipeline-simplified.drawio.pdf", width: 80%)
+]
 
 ---
 #set align(left)
@@ -85,7 +98,7 @@
 ---
 
 #slide[
-  === Git Objects
+  === Git Objects: Blob and Tree
   - *Blob*: Sequence of bytes, usually stores files
   #pause
   - *Tree*: Collection of pointers to blobs or trees.
@@ -99,8 +112,7 @@
 ---
 
 #slide[
-  === Git Objects: Reference
-  === Git Objects
+  === Git Objects: Commit
   - *Commit* contains:
     - Pointer to *exactly one tree*
     #pause
@@ -118,7 +130,7 @@
 ---
 
 #slide[
-  === Git Objects
+  === Git Objects: Reference
   - *References*: Pointer to Git objects
   #pause
   - *Direct Reference*: Points to blobs, trees, commits (e.g. branches and tags)
@@ -132,16 +144,17 @@
 
 ---
 === Git Objects
-- Git objects are *immutable*
+- Blobs, trees and commits are *immutable*
   #pause
 - Blobs, trees and commits are *content-addressed* (stored in `.git/objects`)
-- References are identified by their name (stored in `.git/refs`)
+- References are mutable and identified by a given name (stored in `.git/refs`)
 
 ---
 
 === Replication
-- Synchronize objects with `git fetch <remote_references>:<local_references>`
+- Synchronize objects with `git fetch <refspec>`
 - Specify objects with *refspecs*:
   - Constructed as `<remote_references>`:`<local_references>`
   - Copies the specified remote references 
   - *Downloads all objects reachable* from the specified references
+  - E.g. the command `git fetch refs/foo:refs/foo` copies refs/foo and downloads all object reachable from it

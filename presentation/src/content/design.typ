@@ -69,5 +69,68 @@
 #set align(center)
 #image("../diagrams/gachix-binary-cache-protocol.pdf", width:80%)
 
+
 == Replication
 
+#set align(left)
+
+=== Replication
+- There is no policy (yet) on when a package is added to the cache
+- Packages are either added by *fetching commits from peers* or *constructed using Nix interface*
+
+---
+
+=== Replication with Nix interface
+- Explore the dependency graph of a package in a *depth first search* manner:
+  - Iterate through dependencies
+  - Fully _process_ one dependency, including all its dependencies, before moving to the next dependency in the list
+  - _Processing_ includes:
+    - Fetch NAR using Nix interface and decode it to Git objects
+    - Build the Narinfo
+    - Create the package commit and set references
+
+---
+#set align(center)
+#image("../diagrams/dependency-graph-0.pdf", width:80%)
+
+---
+#set align(center)
+#image("../diagrams/dependency-graph-1.pdf", width:80%)
+
+---
+#set align(center)
+#image("../diagrams/dependency-graph-2.pdf", width:80%)
+
+---
+#set align(center)
+#image("../diagrams/dependency-graph-3.pdf", width:80%)
+
+---
+#set align(center)
+#image("../diagrams/dependency-graph-4.pdf", width:80%)
+
+--- 
+#set align(left)
+=== Replication with Gachix peers
+- Do `git fetch refs/<h>/*:refs/<h>/*` where `<h>` is the hash of the requested package #linebreak()
+  $arrow.r$ fetches the reference `refs/<h>` and all objects reachable from it
+  #pause
+- For every dependency fetch the missing reference object
+  #pause
+- This can be done in a breadth first search manner
+
+---
+#set align(center)
+#image("../diagrams/gachix-fetch-0.drawio.pdf", width:100%)
+
+---
+#set align(center)
+#image("../diagrams/gachix-fetch-1.drawio.pdf", width:100%)
+
+---
+#set align(center)
+#image("../diagrams/gachix-fetch-2.drawio.pdf", width:100%)
+
+---
+#set align(center)
+#image("../diagrams/gachix-fetch-3.drawio.pdf", width:100%)
